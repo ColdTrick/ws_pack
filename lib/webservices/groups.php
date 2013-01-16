@@ -1,1 +1,114 @@
 <?php
+
+	if (elgg_is_active_plugin("groups")) {
+		ws_pack_groups_expose_functions();
+	}
+	
+	function ws_pack_groups_expose_functions() {
+		// get (all) groups
+// 		expose_function(
+// 			"groups.get",
+// 			"ws_pack_groups_get",
+// 			array(
+// 				"filter" => array(
+// 					"type" => "string",
+// 					"required" => true
+// 				),
+// 				"offset" => array(
+// 					"type" => "int",
+// 					"required" => false,
+// 					"default" => 0
+// 				),
+// 				"limit" => array(
+// 					"type" => "int",
+// 					"required" => false,
+// 					"default" => 10
+// 				)
+// 			),
+// 			elgg_echo("ws_pack:api:groups:get"),
+// 			"GET",
+// 			true,
+// 			false
+// 		);
+		
+		// get groups user_guid is a member of
+		expose_function(
+			"groups.member_of",
+			"ws_pack_groups_member_of",
+			array(
+				"user_guid" => array(
+					"type" => "int",
+					"required" => false,
+					"default" => 0
+				),
+				"offset" => array(
+					"type" => "int",
+					"required" => false,
+					"default" => 0
+				),
+				"limit" => array(
+					"type" => "int",
+					"required" => false,
+					"default" => 10
+				)
+			),
+			elgg_echo("ws_pack:api:groups:member_of"),
+			"GET",
+			true,
+			true
+		);
+	}
+	
+	function ws_pack_groups_get($filter, $offset = 0, $limit = 10) {
+		$result = false;
+		
+		//default options
+		$options = array(
+			"type" => "group",
+			"offset" => $offset,
+			"limit" => $limit
+		);
+		
+		// what to do
+		switch ($filter) {
+			case "all":
+				if ($entities = elgg_get_entities($options)) {
+					$result = ws_pack_export_entities($entities);
+				}
+		}
+		
+		if ($result === false) {
+			$result = new ErrorResult(elgg_echo("notfound"));
+		}
+		
+		return $result;
+	}
+	
+	function ws_pack_groups_member_of($user_guid = 0, $offset = 0, $limit = 10) {
+		$result = false;
+		
+		// default to the current logged in user
+		if (empty($user_guid)) {
+			$user_guid = elgg_get_logged_in_user_guid();
+		}
+		
+		if (!empty($user_guid)) {
+			$options = array(
+				"type" => "group",
+				"relationship" => "member",
+				"relationship_guid" => $user_guid,
+				"offset" => $offset,
+				"limit" => $limit
+			);
+			
+			if ($entities = elgg_get_entities_from_relationship($options)) {
+				$result = ws_pack_export_entities($entities);
+			}
+		}
+		
+		if ($result === false) {
+			$result = new ErrorResult(elgg_echo("notfound"));
+		}
+		
+		return $result;
+	}

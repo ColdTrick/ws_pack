@@ -123,3 +123,68 @@
 		return $result;
 	}
 	
+	function ws_pack_export_entities($entities) {
+		$result = false;
+		
+		if (!empty($entities) && is_array($entities)) {
+			$result = array();
+			
+			foreach ($entities as $entity) {
+				if ($entity instanceof ElggEntity) {
+					$tmp_result = array();
+					
+					// get general export values
+					$export_values = $entity->getExportableValues();
+					
+					foreach($export_values as $field_name) {
+						$tmp_result[$field_name] = $entity->$field_name;
+					}
+					
+					// get icon urls
+					if ($icon_sizes = elgg_get_config("icon_sizes")) {
+						$icon_urls = array();
+						
+						foreach ($icon_sizes as $size => $info) {
+							$icon_urls[$size] = $entity->getIconURL($size);
+						}
+						
+						$tmp_result["icon_urls"] = $icon_urls;
+					}
+					
+					// check for additional information
+					switch ($entity->getType()) {
+						case "group":
+							// get the group profile fields
+							if ($group_fields = elgg_get_config("group")) {
+								$field_data = array();
+								
+								foreach ($group_fields as $metadata_name => $type) {
+									$field_data[$metadata_name] = $entity->$metadata_name;
+								}
+								
+								$tmp_result["profile_fields"] = $field_data;
+							}
+							break;
+						case "user":
+							//get the user profiel fields
+							if ($profile_fields = elgg_get_config("profile_fields")) {
+								$field_data = array();
+							
+								foreach ($profile_fields as $metadata_name => $type) {
+									$field_data[$metadata_name] = $entity->$metadata_name;
+								}
+							
+								$tmp_result["profile_fields"] = $field_data;
+							}
+							break;
+					}
+					
+					// return everything
+					$result[] = $tmp_result;
+				}
+			}
+		}
+		
+		return $result;
+	}
+	
