@@ -29,8 +29,8 @@
 			),
 			elgg_echo("ws_pack:api:river:get"),
 			"GET",
-			false,
-			false
+			true,
+			true
 		);
 	}
 	
