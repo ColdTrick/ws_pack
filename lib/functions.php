@@ -188,3 +188,41 @@
 		return $result;
 	}
 	
+	function ws_pack_export_river_items($items) {
+		$result = false;
+		
+		if (!empty($items) && is_array($items)) {
+			$result = array();
+			
+			foreach ($items as $item) {
+				if ($item instanceof ElggRiverItem) {
+					$tmp_result = array();
+					
+					// default export values
+					$export_values = array("id", "subject_guid", "object_guid", "annotation_id", "type", "subtype", "action_type", "posted");
+					
+					foreach($export_values as $field_name) {
+						$tmp_result[$field_name] = $item->$field_name;
+					}
+					
+					// html view
+					$viewtype = elgg_get_viewtype();
+					elgg_set_viewtype("default");
+					
+					$tmp_result["html_view"] = elgg_view_river_item($item);
+					
+					elgg_set_viewtype($viewtype);
+					
+					// add this item to the result set
+					$result[] = $tmp_result;
+				}
+			}
+		}
+		
+		return $result;
+	}
+	
+	function ws_pack_row_to_guid($row) {
+		return (int) $row->guid;
+	}
+	
