@@ -169,6 +169,7 @@
 			elgg_load_library("ws_pack.auth");
 			elgg_load_library("ws_pack.groups");
 			elgg_load_library("ws_pack.river");
+			elgg_load_library("ws_pack.users");
 		} else {
 			list($library, $dummy) = explode(".", $method);
 		
