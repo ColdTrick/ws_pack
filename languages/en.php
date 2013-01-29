@@ -40,6 +40,9 @@ Disabled: These applications have been denied access to teh API.",
 		// river
 		'ws_pack:api:river:get' => "Get a listing of the most recent river items. These can be filtered by supplying a filter: all, for all river items. mine for all my river activities. friends: for all river activities from my friends. groups: for all river activities of my groups, or of the supplied groups (using the guids argument).",
 		
+		//users
+		'ws_pack:api:users:get_logged_in_user' => "Get the currently logged in user.",
+		
 		// actions
 		'ws_pack:action:application:activate:success' => "The application %s has been activated",
 		'ws_pack:action:application:activate:error' => "An unknown error occured while activating %s",

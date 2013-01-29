@@ -18,6 +18,7 @@
 		elgg_register_library("ws_pack.auth", dirname(__FILE__) . "/lib/webservices/auth.php");
 		elgg_register_library("ws_pack.river", dirname(__FILE__) . "/lib/webservices/river.php");
 		elgg_register_library("ws_pack.groups", dirname(__FILE__) . "/lib/webservices/groups.php");
+		elgg_register_library("ws_pack.users", dirname(__FILE__) . "/lib/webservices/users.php");
 		
 		// add subtype class
 		add_subtype("object", APIApplication::SUBTYPE, "APIApplication");
