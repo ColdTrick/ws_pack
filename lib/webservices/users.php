@@ -9,8 +9,8 @@
 			array(),
 			elgg_echo("ws_pack:api:users:get_logged_in_user"),
 			"GET",
-			false,
-			false
+			true,
+			true
 		);
 	}
 	
