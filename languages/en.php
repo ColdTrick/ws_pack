@@ -33,6 +33,13 @@ Disabled: These applications have been denied access to teh API.",
 		'ws_pack:api:auth:get_api_keys' => "Get API keys for your application",
 		'ws_pack:api:auth:get_api_keys:disabled' => "Registration of new API applications has been disabled by the system administrator",
 		
+		// groups
+		'ws_pack:api:groups:get' => "Get a listing of groups. With to filter parameter you can tell which groups to get, currently only all is supported.",
+		'ws_pack:api:groups:member_of' => "Get all the groups of the current user, or the supplied user",
+		
+		// river
+		'ws_pack:api:river:get' => "Get a listing of the most recent river items. These can be filtered by supplying a filter: all, for all river items. mine for all my river activities. friends: for all river activities from my friends. groups: for all river activities of my groups, or of the supplied groups (using the guids argument).",
+		
 		// actions
 		'ws_pack:action:application:activate:success' => "The application %s has been activated",
 		'ws_pack:action:application:activate:error' => "An unknown error occured while activating %s",
