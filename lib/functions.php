@@ -151,6 +151,9 @@
 						$tmp_result["icon_urls"] = $icon_urls;
 					}
 					
+					// add url to the entity
+					$tmp_result["url"] = $entity->getURL();
+					
 					// check for additional information
 					switch ($entity->getType()) {
 						case "group":
@@ -177,6 +180,10 @@
 								$tmp_result["profile_fields"] = $field_data;
 							}
 							break;
+						case "site":
+							// sites have different urls
+							$tmp_result["url"] = $entity->url;
+							break;
 					}
 					
 					// return everything
@@ -188,7 +195,24 @@
 		return $result;
 	}
 	
+	function ws_pack_export_entity(ElggEntity $entity) {
+		$result = false;
+		
+		// make sure we have an entity
+		if (!empty($entity) && ($entity instanceof ElggEntity)) {
+			$temp = array($entity);
+			
+			if ($export = ws_pack_export_entities($temp)) {
+				$result = $export[0];
+			}
+		}
+		
+		return $result;
+	}
+	
 	function ws_pack_export_river_items($items) {
+		elgg_load_library("simple_html_dom");
+		
 		$result = false;
 		
 		if (!empty($items) && is_array($items)) {
@@ -205,12 +229,70 @@
 						$tmp_result[$field_name] = $item->$field_name;
 					}
 					
-					// html view
+					// add object and subject entities
+					$tmp_result["object"] = ws_pack_export_entity($item->getObjectEntity());
+					$tmp_result["subject"] = ws_pack_export_entity($item->getSubjectEntity());
+					
+					// add some html views
+					// set viewtype to default
 					$viewtype = elgg_get_viewtype();
 					elgg_set_viewtype("default");
 					
 					$tmp_result["html_view"] = elgg_view_river_item($item);
 					
+					// parse the html to get some usefull information
+					if($res = str_get_html($tmp_result["html_view"])) {
+						// get the river summary
+						if($summary_element = $res->find("div.elgg-river-summary")) {
+							$summary_element = $summary_element[0];
+							
+							$text = $summary_element->innertext();
+							list($left, $right) = explode("<span class=\"elgg-river-timestamp\">", $text);
+							
+							$tmp_result["summary"] = trim(elgg_strip_tags($left));
+						}
+						
+						// get the river message (optional)
+						if($message_element = $res->find("div.elgg-river-message")) {
+							$message_element = $message_element[0];
+							
+							$tmp_result["message"] = trim(elgg_strip_tags($message_element->innertext()));
+						}
+						
+						// get river attachments (optional)
+						if($attachment_element = $res->find("div.elgg-river-attachments")) {
+							$attachment_element = $attachment_element[0];
+							$tmp_result["attachments"] = array();
+							
+							// find images
+							if ($images = $attachment_element->find("img")) {
+								$image_urls = array();
+							
+								foreach($images as $img) {
+									$image_urls[] = $img->src;
+								}
+							
+								$tmp_result["attachments"]["images"] = $image_urls;
+							}
+							
+							// find links
+							if ($links = $attachment_element->find("a")) {
+								$link_urls = array();
+							
+								foreach($links as $link) {
+									$link_urls[] = $link->href;
+								}
+							
+								$tmp_result["attachments"]["links"] = $link_urls;
+							}
+						}
+					}
+					
+					// add friendly time
+					$friendly_time = elgg_view_friendly_time($item->posted);
+					$tmp_result["friendly_time"] = elgg_strip_tags($friendly_time);
+					
+					// restore viewtype
 					elgg_set_viewtype($viewtype);
 					
 					// add this item to the result set
