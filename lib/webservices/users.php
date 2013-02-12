@@ -18,7 +18,7 @@
 		$result = false;
 		
 		if ($user = elgg_get_logged_in_user_entity()) {
-			if ($export = ws_pack_export_entities(array($user))) {
+			if ($export = ws_pack_export_entity($user)) {
 				$result = new SuccessResult($export[0]);
 			}
 		}
