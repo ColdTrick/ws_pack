@@ -290,7 +290,7 @@
 					
 					// add friendly time
 					$friendly_time = elgg_view_friendly_time($item->posted);
-					$tmp_result["friendly_time"] = elgg_strip_tags($friendly_time);
+					$tmp_result["friendly_time"] = trim(elgg_strip_tags($friendly_time));
 					
 					// restore viewtype
 					elgg_set_viewtype($viewtype);
