@@ -42,6 +42,22 @@ Disabled: These applications have been denied access to teh API.",
 		
 		//users
 		'ws_pack:api:users:get_logged_in_user' => "Get the currently logged in user.",
+		'ws_pack:api:users:register_for_push_notifications' => "Register the current user for push notifications at the provided Push Service Provider. Currently only Appcelerator is supported.",
+		
+		'ws_pack:users:register_for_push_notifications:error' => "An unknown error occurred while registering for push notifications",
+		'ws_pack:users:unregister_from_push_notifications:error' => "An unknown error occurred while unregistering from push notifications",
+		
+		'ws_pack:user_settings:error:notfound' => "The user settings could not be found for the current user, please try again later",
+		
+		'ws_pack:push_notifications:error:unsupported_service' => "The provided Push Notification Service %s is not support at this time.",
+		
+		// system
+		'ws_pack:api:system:api:register_push_notification_service' => "Register a Push Notification Service to the current API Application. Currently only appcelerator is supported.",
+		'ws_pack:api:system:api:unregister_push_notification_service' => "Unregister a Push Notification Service from the current API Application. Currently only appcelerator is supported.",
+		
+		'ws_pack:system:api:register_push_notification_service:error' => "An unknown error occurred while registering the push notification service",
+		
+		'ws_pack:system:api:unregister_push_notification_service:error' => "An unknown error occurred while unregistering the push notification service",
 		
 		// actions
 		'ws_pack:action:application:activate:success' => "The application %s has been activated",

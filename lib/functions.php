@@ -1,5 +1,7 @@
 <?php
 
+	global $ws_pack_current_api_application;
+	
 	function ws_pack_get_application_from_id($application_id){
 		$result = false;
 		
@@ -68,6 +70,30 @@
 		} else {
 			// already existed, shouldn't happen
 			$result = $application;
+		}
+		
+		return $result;
+	}
+	
+	function ws_pack_get_application_from_api_user_id($api_user_id) {
+		$result = false;
+		
+		$api_user_id = sanitise_int($api_user_id, false);
+		
+		if (!empty($api_user_id)) {
+			$options = array(
+				"type" => "object",
+				"subtype" => APIApplication::SUBTYPE,
+				"limit" => 1,
+				"metadata_name_value_pairs" => array(
+					"name" => "api_user_id",
+					"value" => $api_user_id
+				)
+			);
+			
+			if ($entities = elgg_get_entities_from_metadata($options)) {
+				$result = $entities[0];
+			}
 		}
 		
 		return $result;
@@ -308,3 +334,50 @@
 		return (int) $row->guid;
 	}
 	
+	function ws_pack_set_current_api_application(APIApplication $application) {
+		global $ws_pack_current_api_application;
+		$result = false;
+		
+		if (!empty($application) && elgg_instanceof($application, "object", APIApplication::SUBTYPE)) {
+			$ws_pack_current_api_application = $application;
+			$result = true;
+		}
+		
+		return $result;
+	}
+	
+	function ws_pack_get_current_api_application() {
+		global $ws_pack_current_api_application;
+		
+		return $ws_pack_current_api_application;
+	}
+	
+	function ws_pack_get_application_user_settings(ElggUser $user, APIApplication $api_application) {
+		$result = false;
+		
+		if(!empty($user) && !empty($api_application)) {
+			if (elgg_instanceof($user, "user") && elgg_instanceof($api_application, "object", APIApplication::SUBTYPE)) {
+				$options = array(
+					"type" => "object",
+					"subtype" => APIApplicationUserSetting::SUBTYPE,
+					"limit" => 1,
+					"owner_guid" => $user->getGUID(),
+					"container_guid" => $api_application->getGUID()
+				);
+				
+				if ($entities = elgg_get_entities($options)) {
+					$result = $entities[0];
+				} else {
+					$entity = new APIApplicationUserSetting();
+					$entity->owner_guid = $user->getGUID();
+					$entity->container_guid = $api_application->getGUID();
+					
+					if ($entity->save()) {
+						$result = $entity;
+					}
+				}
+			}
+		}
+		
+		return $result;
+	}

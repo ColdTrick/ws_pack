@@ -170,6 +170,7 @@
 			elgg_load_library("ws_pack.groups");
 			elgg_load_library("ws_pack.river");
 			elgg_load_library("ws_pack.users");
+			elgg_load_library("ws_pack.system");
 		} else {
 			list($library, $dummy) = explode(".", $method);
 		
@@ -180,5 +181,20 @@
 				// do nothing
 			}
 		}
+	}
 	
+	function ws_pack_api_key_use_hook_handler($hook, $type, $returnvalue, $params) {
+		
+		if (!empty($params) && is_string($params)) {
+			$site = elgg_get_site_entity();
+			
+			// get the current api user
+			if ($api_user = get_api_user($site->getGUID(), $params)) {
+				// check if we're using our API application
+				if ($api_application = ws_pack_get_application_from_api_user_id($api_user->id)) {
+					// store the API application for later use 
+					ws_pack_set_current_api_application($api_application);
+				}
+			}
+		}
 	}

@@ -145,5 +145,73 @@
 			
 			return $result;
 		}
+		
+		function registerPushNotificationService($service_name, $settings) {
+			$result = false;
+			
+			if (!empty($service_name) && !empty($settings)) {
+				if (!is_array($settings)) {
+					$settings = array($settings);
+				}
+				
+				switch ($service_name) {
+					case "appcelerator":
+						if ($this->getPushNotificationService($service_name)) {
+							// already registered
+							$result = true;
+						} else {
+							$value = array($service_name => $settings);
+							
+							$result = $this->annotate("push_notification_service", json_encode($value));
+						}
+						break;
+				}
+				
+			}
+			
+			return $result;
+		}
+		
+		function getPushNotificationService($service_name) {
+			$result = false;
+			
+			if (!empty($service_name)) {
+				if ($services = $this->getAnnotations("push_notification_service", false)) {
+					foreach($services as $service) {
+						if ($value = $service->value) {
+							if ($value = json_decode($value, true)) {
+								if (array_key_exists($service_name, $value)) {
+									$result = $value[$service_name];
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			return $result;
+		}
+		
+		function unregisterPushNotificationService($service_name) {
+			$result = false;
+			
+			if (!empty($service_name)) {
+				if ($services = $this->getAnnotations("push_notification_service", false)) {
+					foreach($services as $service) {
+						if ($value = $service->value) {
+							if ($value = json_decode($value, true)) {
+								if (array_key_exists($service_name, $value)) {
+									$result = $service->delete();
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			return $result;
+		}
 	}
 	
