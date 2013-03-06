@@ -25,6 +25,11 @@
 					"type" => "int",
 					"required" => false,
 					"default" => 25
+				),
+				"posted_time_lower" => array(
+					"type" => "int",
+					"required" => false,
+					"default" => 0
 				)
 			),
 			elgg_echo("ws_pack:api:river:get"),
@@ -34,13 +39,14 @@
 		);
 	}
 	
-	function ws_pack_river_get($filter, $guids = array(), $offset = 0, $limit = 25) {
+	function ws_pack_river_get($filter, $guids = array(), $offset = 0, $limit = 25, $posted_time_lower = 0) {
 		$result = false;
 		
 		// default options
 		$options = array(
 			"offset" => $offset,
-			"limit" => $limit
+			"limit" => $limit,
+			"posted_time_lower" => $posted_time_lower
 		);
 		
 		// what to return
