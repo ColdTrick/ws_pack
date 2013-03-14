@@ -63,7 +63,7 @@
 		return $result;
 	}
 	
-	function ws_pack_system_api_register_push_notification_service($service_name) {
+	function ws_pack_system_api_unregister_push_notification_service($service_name) {
 		$result = false;
 		
 		if ($api_application = ws_pack_get_current_api_application()) {
