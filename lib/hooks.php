@@ -199,3 +199,18 @@
 		}
 	}
 	
+	function ws_pack_container_write_hook_handler($hook, $type, $returnvalue, $params) {
+		$result = $returnvalue;
+	
+		if(!empty($params) && is_array($params)) {
+			$subtype = elgg_extract("subtype", $params);
+			$container = elgg_extract("container", $params);
+				
+			if(($subtype == APIApplicationUserSetting::SUBTYPE) && elgg_instanceof($container, "object", APIApplication::SUBTYPE)) {
+				$result = true;
+			}
+		}
+	
+		return $result;
+	}
+	

@@ -33,6 +33,7 @@
 		elgg_register_plugin_hook_handler("register", "menu:entity", "ws_pack_entity_menu_hook_handler");
 		elgg_register_plugin_hook_handler("rest", "init", "ws_pack_rest_init_hook_handler");
 		elgg_register_plugin_hook_handler("api_key", "use", "ws_pack_api_key_use_hook_handler");
+		elgg_register_plugin_hook_handler("container_permissions_check", "object", "ws_pack_container_write_hook_handler");
 		
 		// register event handlers
 		elgg_register_event_handler("created", "river", "ws_pack_created_river_event_handler");
