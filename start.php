@@ -2,6 +2,7 @@
 
 	define("WS_PACK_API_REGISTRATION_DISABLED", -110);
 
+	require_once(dirname(__FILE__) . "/lib/events.php");
 	require_once(dirname(__FILE__) . "/lib/functions.php");
 	require_once(dirname(__FILE__) . "/lib/hooks.php");
 	
@@ -32,6 +33,9 @@
 		elgg_register_plugin_hook_handler("register", "menu:entity", "ws_pack_entity_menu_hook_handler");
 		elgg_register_plugin_hook_handler("rest", "init", "ws_pack_rest_init_hook_handler");
 		elgg_register_plugin_hook_handler("api_key", "use", "ws_pack_api_key_use_hook_handler");
+		
+		// register event handlers
+		elgg_register_event_handler("created", "river", "ws_pack_created_river_event_handler");
 		
 		// register actions
 		elgg_register_action("ws_pack/application/activate", dirname(__FILE__) . "/actions/application/activate.php", "admin");

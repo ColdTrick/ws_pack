@@ -193,6 +193,30 @@
 			return $result;
 		}
 		
+		function getPushNotificationServices() {
+			$result = false;
+			
+			if ($services = $this->getAnnotations("push_notification_service", false)) {
+				$tmp_result = array();
+				
+				foreach ($services as $service) {
+					if ($value = $service->value) {
+						if ($value = json_decode($value, true)) {
+							foreach ($value as $service_name => $settings) {
+								$tmp_result[$service_name] = $settings;
+							}
+						}
+					}
+				}
+				
+				if (!empty($tmp_result)) {
+					$result = $tmp_result;
+				}
+			}
+			
+			return $result;
+		}
+		
 		function unregisterPushNotificationService($service_name) {
 			$result = false;
 			
@@ -212,6 +236,62 @@
 			}
 			
 			return $result;
+		}
+		
+		function sendPushNotification($message, $potential_user_guids) {
+			
+			if(!empty($message) && !empty($potential_user_guids)) {
+				if(!is_array($potential_user_guids)) {
+					$potential_user_guids = array($potential_user_guids);
+				}
+				
+				if($push_services = $this->getPushNotificationServices()) {
+					
+					foreach($push_services as $service_name => $settings) {
+						$classname = "WsPack" . ucfirst($service_name);
+						
+						if (class_exists($classname)) {
+							$notify_options = array(
+								"type" => "object",
+								"subtype" => APIApplicationUserSetting::SUBTYPE,
+								"limit" => false,
+								"owner_guids" => $potential_user_guids,
+								"container_guid" => $this->getGUID(),
+								"annotation_name" => $service_name
+							);
+							
+							if ($annotations = elgg_get_annotations($notify_options)) {
+								
+								switch ($service_name) {
+									case "appcelerator":
+										$to_ids = array();
+										$channel = "";
+										
+										foreach($annotations as $annotation) {
+											if ($data = json_decode($annotation->value, true)) {
+												if (empty($channel) && isset($data["channel"])) {
+													$channel = $data["channel"];
+												}
+												
+												if(isset($data["user_id"])) {
+													$to_ids[] = $data["user_id"];
+												}
+											}
+										}
+										
+										if(!empty($channel) && !empty($to_ids)) {
+											$push_service = new $classname($settings);
+											
+											$push_service->sendMessage($message, $channel, $to_ids);
+										}
+										
+										break;
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 	
