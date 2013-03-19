@@ -42,6 +42,9 @@
 		elgg_register_action("ws_pack/application/deactivate", dirname(__FILE__) . "/actions/application/deactivate.php", "admin");
 		elgg_register_action("ws_pack/application/disable", dirname(__FILE__) . "/actions/application/disable.php", "admin");
 		elgg_register_action("ws_pack/application/delete", dirname(__FILE__) . "/actions/application/delete.php", "admin");
+		
+		elgg_register_action("ws_pack/push_service/delete", dirname(__FILE__) . "/actions/push_service/delete.php", "admin");
+		
 	}
 	
 	function ws_pack_pagesetup() {

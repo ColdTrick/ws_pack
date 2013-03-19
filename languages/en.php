@@ -3,6 +3,7 @@
 	$english = array(
 		// general
 		'item:object:ws_pack_application' => "Webservice application",
+		'item:object:ws_pack_application_user_setting' => "Webservice application user settings",
 		
 		'ws_pack:deactivate' => "Deactivate",
 		'ws_pack:activate' => "Activate",
@@ -28,6 +29,11 @@ Disabled: These applications have been denied access to teh API.",
 		'ws_pack:api:application:status:pending' => "The application is pending approval",
 		'ws_pack:api:application:status:disabled' => "The application is disabled",
 		'ws_pack:api:application:status:inactive' => "The application is temporaraly disabled",
+		
+		'ws_pack:api:application:api_keys:link' => "Elgg API keys",
+		'ws_pack:api:application:api_keys:key' => "API key",
+		'ws_pack:api:application:api_keys:secret' => "Secret",
+		'ws_pack:api:application:push_service:delete' => "Delete the Push Notification Service settings",
 		
 		// auth
 		'ws_pack:api:auth:get_api_keys' => "Get API keys for your application",
@@ -69,6 +75,9 @@ Disabled: These applications have been denied access to teh API.",
 		'ws_pack:action:application:disable:success' => "The application %s has been disabled",
 		'ws_pack:action:application:disable:error' => "An unknown error occured while disabling %s",
 		
+		'ws_pack:action:push_service:delete:error' => "An unknown error occured while deleting the Push Notification Service settings",
+		'ws_pack:action:push_service:delete:success' => "The Push Notification Service settings where deleted successfully",
+	
 		'' => "",
 	);
 	

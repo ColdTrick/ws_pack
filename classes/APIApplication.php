@@ -193,24 +193,29 @@
 			return $result;
 		}
 		
-		function getPushNotificationServices() {
+		function getPushNotificationServices($get_annotations = false) {
 			$result = false;
 			
 			if ($services = $this->getAnnotations("push_notification_service", false)) {
-				$tmp_result = array();
 				
-				foreach ($services as $service) {
-					if ($value = $service->value) {
-						if ($value = json_decode($value, true)) {
-							foreach ($value as $service_name => $settings) {
-								$tmp_result[$service_name] = $settings;
+				if(empty($get_annotations)) {
+					$tmp_result = array();
+					
+					foreach ($services as $service) {
+						if ($value = $service->value) {
+							if ($value = json_decode($value, true)) {
+								foreach ($value as $service_name => $settings) {
+									$tmp_result[$service_name] = $settings;
+								}
 							}
 						}
 					}
-				}
-				
-				if (!empty($tmp_result)) {
-					$result = $tmp_result;
+					
+					if (!empty($tmp_result)) {
+						$result = $tmp_result;
+					}
+				} else {
+					$result = $services;
 				}
 			}
 			
