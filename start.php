@@ -6,8 +6,27 @@
 	require_once(dirname(__FILE__) . "/lib/functions.php");
 	require_once(dirname(__FILE__) . "/lib/hooks.php");
 	
+	elgg_register_event_handler("plugins_boot", "system", "ws_pack_plugins_boot");
 	elgg_register_event_handler("init", "system", "ws_pack_init");
 	elgg_register_event_handler("pagesetup", "system", "ws_pack_pagesetup");
+	
+	
+	function ws_pack_plugins_boot() {
+		// check for sso login
+		if (!elgg_is_logged_in()) {
+			if (($user_guid = get_input("u", false)) && ($sso_secret = get_input("s", false))) {
+				if (ws_pack_validate_sso_secret($user_guid, $sso_secret)) {
+					// valid user, login
+					try {
+						$user = get_user($user_guid);
+						login($user);
+					} catch(Exception $e) {
+						// something went wrong, continue
+					}
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Initialize Elgg, prepare some libraries

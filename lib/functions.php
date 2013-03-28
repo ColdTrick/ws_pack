@@ -178,7 +178,7 @@
 					}
 					
 					// add url to the entity
-					$tmp_result["url"] = $entity->getURL();
+					$tmp_result["url"] = ws_pack_create_sso_url($entity->getURL());
 					
 					// check for additional information
 					switch ($entity->getType()) {
@@ -381,3 +381,79 @@
 		
 		return $result;
 	}
+	
+	function ws_pack_create_sso_url($url) {
+		$result = $url;
+		
+		if ($user = elgg_get_logged_in_user_entity()) {
+			if ($secret = ws_pack_generate_sso_secret($user)) {
+				$url_parts = parse_url($url);
+				
+				if (isset($url_parts["query"])) {
+					$url_parts["query"] .= "&u=" . $user->getGUID() . "&s=" . $secret;
+				} else {
+					$url_parts["query"] = "u=" . $user->getGUID() . "&s=" . $secret;
+				}
+				
+				if (is_callable("http_build_url")) {
+					$result = http_build_url($url_parts);
+				} else {
+					$result = "";
+					if (isset($url_parts["scheme"])) {
+						$result .= $url_parts["scheme"] . "://";
+					}
+					if (isset($url_parts["host"])) {
+						$result .= $url_parts["host"];
+					}
+					if (isset($url_parts["path"])) {
+						$result .= $url_parts["path"];
+					}
+					if (isset($url_parts["query"])) {
+						$result .= "?" . $url_parts["query"];
+					}
+					if (isset($url_parts["fragment"])) {
+						$result .= "#" . $url_parts["fragment"];
+					}
+				}
+			}
+		}
+		
+		return $result;
+	}
+	
+	function ws_pack_generate_sso_secret(ElggUser $user) {
+		static $running_cache;
+		
+		$result = false;
+		
+		if (!empty($user) && elgg_instanceof($user, "user", null, "ElggUser")) {
+			if(!isset($running_cache)) {
+				$running_cache = array();
+			}
+			
+			if(!isset($running_cache[$user->getGUID()])) {
+				$running_cache[$user->getGUID()] = md5($user->getGUID() . get_site_secret() . $user->salt);
+			}
+			
+			$result = $running_cache[$user->getGUID()];
+		}
+		
+		return $result;
+	}
+	
+	function ws_pack_validate_sso_secret($user_guid, $secret) {
+		$result = false;
+		
+		if (!empty($user_guid) && !empty($secret)) {
+			if ($user = get_user($user_guid)) {
+				if ($correct_secret = ws_pack_generate_sso_secret($user)) {
+					if($correct_secret === $secret) {
+						$result = true;
+					}
+				}
+			}
+		}
+		
+		return $result;
+	}
+	
