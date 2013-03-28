@@ -41,7 +41,9 @@
 						"to_ids" => implode(",", $to_ids),
 						"payload" => json_encode(array(
 							"title" => $site->name,
-							"alert" => $text
+							"alert" => $text,
+							"badge" => 1,
+							"sound" => "default"
 						))
 					));
 					
