@@ -78,7 +78,7 @@
 		}
 		
 		if ($result === false) {
-			$result = new ErrorResult(elgg_echo("notfound"));
+			$result = new ErrorResult(elgg_echo("notfound"), WS_PACK_API_NO_RESULTS);
 		}
 		
 		return $result;
@@ -107,7 +107,7 @@
 		}
 		
 		if ($result === false) {
-			$result = new ErrorResult(elgg_echo("notfound"));
+			$result = new ErrorResult(elgg_echo("notfound"), WS_PACK_API_NO_RESULTS);
 		}
 		
 		return $result;

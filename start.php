@@ -1,5 +1,6 @@
 <?php
 
+	define("WS_PACK_API_NO_RESULTS", -100);
 	define("WS_PACK_API_REGISTRATION_DISABLED", -110);
 
 	require_once(dirname(__FILE__) . "/lib/events.php");

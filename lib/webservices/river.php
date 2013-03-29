@@ -97,7 +97,7 @@
 		
 		// did we get river items
 		if ($result === false) {
-			$result = new ErrorResult(elgg_echo("river:none"));
+			$result = new ErrorResult(elgg_echo("river:none"), WS_PACK_API_NO_RESULTS);
 		}
 		
 		return $result;
