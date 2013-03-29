@@ -42,7 +42,7 @@
 						"payload" => json_encode(array(
 							"title" => $site->name,
 							"alert" => $text,
-							"badge" => 1,
+							"badge" => 0,
 							"sound" => "default"
 						))
 					));
