@@ -162,7 +162,7 @@
 						} else {
 							$value = array($service_name => $settings);
 							
-							$result = $this->annotate("push_notification_service", json_encode($value));
+							$result = $this->annotate("push_notification_service", json_encode($value), ACCESS_PUBLIC);
 						}
 						break;
 				}
