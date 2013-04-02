@@ -42,11 +42,20 @@
 	function ws_pack_river_get($filter, $guids = array(), $offset = 0, $limit = 25, $posted_time_lower = 0) {
 		$result = false;
 		
+		$dbprefix = elgg_get_config("dbprefix");
+		
 		// default options
 		$options = array(
 			"offset" => $offset,
 			"limit" => $limit,
-			"posted_time_lower" => $posted_time_lower
+			"posted_time_lower" => $posted_time_lower,
+			"joins" => array(
+				"JOIN " . $dbprefix . "entities sue ON rv.subject_guid = sue.guid",
+				"JOIN " . $dbprefix . "entities obe ON rv.object_guid = obe.guid"
+			),
+			"wheres" => array(
+				"(sue.enabled = 'yes' AND obe.enabled = 'yes')"
+			)
 		);
 		
 		// what to return
@@ -76,7 +85,7 @@
 				
 				// check if there are groups
 				if (!empty($guids)) {
-					$options["joins"] = array("JOIN " . elgg_get_config("dbprefix") . "entities e ON rv.object_guid = e.guid");
+					$options["joins"] = array("JOIN " . $dbprefix . "entities e ON rv.object_guid = e.guid");
 					$options["wheres"] = array("(rv.object_guid IN (" . implode(",", $guids) . ") OR e.container_guid IN (" . implode(",", $guids) . "))");
 				} else {
 					// no groups found, so make sure not to return anything
