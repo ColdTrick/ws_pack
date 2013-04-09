@@ -9,7 +9,6 @@
 		
 		private $settings;
 		private $login_cookie;
-		private $app_key = "nGIQK9pwWuq498vIBozIL7qEAmpCVXkT";
 		
 		public function __construct($settings) {
 			
