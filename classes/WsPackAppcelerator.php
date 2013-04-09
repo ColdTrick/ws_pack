@@ -129,7 +129,7 @@
 			// make sure the path is available
 			$path = $dataroot . "ws_pack_logging/" . $site->getGUID() . "/" . self::SERVICE_NAME . "/";
 			if (!is_dir($path)) {
-				mkdir($path, null, true);
+				mkdir($path, 0644, true);
 			}
 			
 			// make a file heading
