@@ -17,24 +17,23 @@
 	// entity icon
 	$entity_icon = elgg_view_entity_icon($entity, "small", $vars);
 	
+	$subtitle = "";
+	
+	// summary
+	$params = array(
+		"entity" => $entity,
+		"metadata" => $entity_menu,
+		"title" => $entity->getTitle(),
+		"subtext" => $subtitle,
+		"content" => $entity->getDescription()
+	);
+	
+	$params = $params + $vars;
+	$summary = elgg_view("object/elements/summary", $params);
+	
 	// show the entity
 	if ($full_view) {
-		echo "ToDo";
-	} else {
-		$subtitle = "";
-		
-		// listing view
-		$params = array(
-			"entity" => $entity,
-			"metadata" => $entity_menu,
-			"title" => $entity->getTitle(),
-			"subtext" => $subtitle,
-			"content" => elgg_get_excerpt($entity->getDescription())
-		);
-		
-		$params = $params + $vars;
-		$summary = elgg_view("object/elements/summary", $params);
-		
+		// full view
 		$body_links = array();
 		$body_content = "";
 		
@@ -63,8 +62,8 @@
 								}
 								
 								$body_content .= elgg_view("output/confirmlink", array(
-									"text" => elgg_echo("ws_pack:api:application:push_service:delete"), 
-									"confirm" => elgg_echo("deleteconfirm"), 
+									"text" => elgg_echo("ws_pack:api:application:push_service:delete"),
+									"confirm" => elgg_echo("deleteconfirm"),
 									"href" => "action/ws_pack/push_service/delete?id=" . $annotation->id . "&guid=" . $entity->getGUID()
 								));
 								
@@ -86,4 +85,7 @@
 			"summary" => $summary,
 			"body" => $body
 		));
+	} else {
+		// listing view
+		echo elgg_view_image_block($entity_icon, $summary);
 	}

@@ -1,6 +1,6 @@
 <?php
 
-	// scho a tabbed menu
+	// show a tabbed menu
 	echo elgg_view_menu("ws_pack:applications", array(
 		"sort_by" => "priority",
 		"class" => "elgg-tabs elgg-htabs"
@@ -15,7 +15,7 @@
 		"subtype" => APIApplication::SUBTYPE,
 		"limit" => false,
 		"pagination" => false,
-		"full_view" => false
+		"full_view" => true
 	);
 	
 	switch($tab){
@@ -24,7 +24,7 @@
 			$api_user_id = add_metastring("api_user_id");
 			
 			$options["wheres"] = array("NOT EXISTS (
-				SELECT 1  
+				SELECT 1
 				FROM " . $dbprefix . "metadata md
 				WHERE md.entity_guid = e.guid
 					AND md.name_id = " . $api_user_id . ")"

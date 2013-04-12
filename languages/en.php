@@ -25,6 +25,12 @@ Disabled: These applications have been denied access to the API.",
 		// plugin settings
 		'ws_pack:settings:allow_application_registration' => "Allow new applications to register for API usage",
 
+		// user settings
+		'ws_pack:usersettings:none' => "No webservices were found",
+		'ws_pack:usersettings:push_notification_services' => "Push notification services",
+		'ws_pack:annotation:push_notification_service:delete_confirm' => "Are you sure you wish to delete this Push Notification Service, you will no longer get push notifications on you mobile device",
+		'ws_pack:annotation:push_notification_service:settings' => "Show settings",
+			
 		// api
 		'ws_pack:api:application:status:pending' => "The application is pending approval",
 		'ws_pack:api:application:status:disabled' => "The application is disabled",
@@ -78,6 +84,11 @@ Disabled: These applications have been denied access to the API.",
 		'ws_pack:action:push_service:delete:error' => "An unknown error occured while deleting the Push Notification Service settings",
 		'ws_pack:action:push_service:delete:success' => "The Push Notification Service settings where deleted successfully",
 	
+		'ws_pack:action:push_service:delete_user:error:id' => "Please provide a valid ID in order to delete the settings",
+		'ws_pack:action:push_service:delete_user:error:can_edit' => "You're not allowed to edit these settings",
+		'ws_pack:action:push_service:delete_user:error:delete' => "An unknown error occured while deleting the Push Notification settings",
+		'ws_pack:action:push_service:delete_user:success' => "The Push Notification settings have successfully been removed",
+		
 		'' => "",
 	);
 	

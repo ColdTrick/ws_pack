@@ -31,7 +31,7 @@
 	
 	/**
 	 * Initialize Elgg, prepare some libraries
-	 * 
+	 *
 	 */
 	function ws_pack_init(){
 		
@@ -51,6 +51,7 @@
 		// register plugin hooks
 		elgg_register_plugin_hook_handler("register", "menu:ws_pack:applications", "ws_pack_applications_menu_hook_handler");
 		elgg_register_plugin_hook_handler("register", "menu:entity", "ws_pack_entity_menu_hook_handler");
+		elgg_register_plugin_hook_handler("register", "menu:annotation", "ws_pack_annotation_menu_hook_handler");
 		elgg_register_plugin_hook_handler("rest", "init", "ws_pack_rest_init_hook_handler");
 		elgg_register_plugin_hook_handler("api_key", "use", "ws_pack_api_key_use_hook_handler");
 		elgg_register_plugin_hook_handler("container_permissions_check", "object", "ws_pack_container_write_hook_handler");
@@ -65,6 +66,7 @@
 		elgg_register_action("ws_pack/application/delete", dirname(__FILE__) . "/actions/application/delete.php", "admin");
 		
 		elgg_register_action("ws_pack/push_service/delete", dirname(__FILE__) . "/actions/push_service/delete.php", "admin");
+		elgg_register_action("ws_pack/push_service/delete_user", dirname(__FILE__) . "/actions/push_service/delete_user.php");
 		
 	}
 	

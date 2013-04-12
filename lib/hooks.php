@@ -43,112 +43,113 @@
 		if (($entity = elgg_extract("entity", $params)) && elgg_instanceof($entity, "object", APIApplication::SUBTYPE)) {
 			$result = array();
 			
-			$result[] = ElggMenuItem::factory(array(
-				"name" => "delete",
-				"text" => elgg_view_icon("delete"),
-				"title" => elgg_echo("delete:this"),
-				"href" => "action/ws_pack/application/delete?guid=" . $entity->getGUID(),
-				"confirm" => elgg_echo("deleteconfirm"),
-				"priority" => 300,
-			));
-			
-			switch ($entity->getStatusCode()) {
-				case SuccessResult::$RESULT_SUCCESS:
-					// active
-					$result[] = ElggMenuItem::factory(array(
-						"name" => "status",
-						"text" => elgg_echo("active"),
-						"href" => false,
-						"priority" => 50
-					));
-					
-					$result[] = ElggMenuItem::factory(array(
-						"name" => "deactivate",
-						"text" => elgg_echo("ws_pack:deactivate"),
-						"href" => "/action/ws_pack/application/deactivate?guid=" . $entity->getGUID(),
-						"is_action" => true,
-						"priority" => 100
-					));
-					$result[] = ElggMenuItem::factory(array(
-						"name" => "disable",
-						"text" => elgg_echo("disable"),
-						"href" => "/action/ws_pack/application/disable?guid=" . $entity->getGUID(),
-						"is_action" => true,
-						"priority" => 200
-					));
-					
-					break;
-				case APIApplication::STATE_PENDING:
-					// pending
-					$result[] = ElggMenuItem::factory(array(
-						"name" => "status",
-						"text" => elgg_echo("ws_pack:api:application:status:pending"),
-						"href" => false,
-						"priority" => 50
-					));
+			if (elgg_in_context("admin") && $entity->canEdit()) {
+				$result[] = ElggMenuItem::factory(array(
+					"name" => "delete",
+					"text" => elgg_view_icon("delete"),
+					"title" => elgg_echo("delete:this"),
+					"href" => "action/ws_pack/application/delete?guid=" . $entity->getGUID(),
+					"confirm" => elgg_echo("deleteconfirm"),
+					"priority" => 300,
+				));
+				
+				switch ($entity->getStatusCode()) {
+					case SuccessResult::$RESULT_SUCCESS:
+						// active
+						$result[] = ElggMenuItem::factory(array(
+							"name" => "status",
+							"text" => elgg_echo("active"),
+							"href" => false,
+							"priority" => 50
+						));
 						
-					$result[] = ElggMenuItem::factory(array(
-						"name" => "activate",
-						"text" => elgg_echo("ws_pack:activate"),
-						"href" => "/action/ws_pack/application/activate?guid=" . $entity->getGUID(),
-						"is_action" => true,
-						"priority" => 100
-					));
-					$result[] = ElggMenuItem::factory(array(
-						"name" => "disable",
-						"text" => elgg_echo("disable"),
-						"href" => "/action/ws_pack/application/disable?guid=" . $entity->getGUID(),
-						"is_action" => true,
-						"priority" => 200
-					));
-					
-					break;
-				case ErrorResult::$RESULT_FAIL_APIKEY_DISABLED:
-					// disabled
-					$result[] = ElggMenuItem::factory(array(
-						"name" => "status",
-						"text" => elgg_echo("ws_pack:api:application:status:disabled"),
-						"href" => false,
-						"priority" => 50
-					));
-					
-					$result[] = ElggMenuItem::factory(array(
-						"name" => "activate",
-						"text" => elgg_echo("ws_pack:activate"),
-						"href" => "/action/ws_pack/application/activate?guid=" . $entity->getGUID(),
-						"is_action" => true,
-						"priority" => 100
-					));
-					
-					break;
-				case ErrorResult::$RESULT_FAIL_APIKEY_INACTIVE:
-					// inactive
-					$result[] = ElggMenuItem::factory(array(
-						"name" => "status",
-						"text" => elgg_echo("ws_pack:api:application:status:inactive"),
-						"href" => false,
-						"priority" => 50
-					));
-					
-					$result[] = ElggMenuItem::factory(array(
-						"name" => "activate",
-						"text" => elgg_echo("ws_pack:activate"),
-						"href" => "/action/ws_pack/application/activate?guid=" . $entity->getGUID(),
-						"is_action" => true,
-						"priority" => 100
-					));
-					
-					$result[] = ElggMenuItem::factory(array(
-						"name" => "disable",
-						"text" => elgg_echo("disable"),
-						"href" => "/action/ws_pack/application/disable?guid=" . $entity->getGUID(),
-						"is_action" => true,
-						"priority" => 200
-					));
-					
-					break;
+						$result[] = ElggMenuItem::factory(array(
+							"name" => "deactivate",
+							"text" => elgg_echo("ws_pack:deactivate"),
+							"href" => "/action/ws_pack/application/deactivate?guid=" . $entity->getGUID(),
+							"is_action" => true,
+							"priority" => 100
+						));
+						$result[] = ElggMenuItem::factory(array(
+							"name" => "disable",
+							"text" => elgg_echo("disable"),
+							"href" => "/action/ws_pack/application/disable?guid=" . $entity->getGUID(),
+							"is_action" => true,
+							"priority" => 200
+						));
+						
+						break;
+					case APIApplication::STATE_PENDING:
+						// pending
+						$result[] = ElggMenuItem::factory(array(
+							"name" => "status",
+							"text" => elgg_echo("ws_pack:api:application:status:pending"),
+							"href" => false,
+							"priority" => 50
+						));
+							
+						$result[] = ElggMenuItem::factory(array(
+							"name" => "activate",
+							"text" => elgg_echo("ws_pack:activate"),
+							"href" => "/action/ws_pack/application/activate?guid=" . $entity->getGUID(),
+							"is_action" => true,
+							"priority" => 100
+						));
+						$result[] = ElggMenuItem::factory(array(
+							"name" => "disable",
+							"text" => elgg_echo("disable"),
+							"href" => "/action/ws_pack/application/disable?guid=" . $entity->getGUID(),
+							"is_action" => true,
+							"priority" => 200
+						));
+						
+						break;
+					case ErrorResult::$RESULT_FAIL_APIKEY_DISABLED:
+						// disabled
+						$result[] = ElggMenuItem::factory(array(
+							"name" => "status",
+							"text" => elgg_echo("ws_pack:api:application:status:disabled"),
+							"href" => false,
+							"priority" => 50
+						));
+						
+						$result[] = ElggMenuItem::factory(array(
+							"name" => "activate",
+							"text" => elgg_echo("ws_pack:activate"),
+							"href" => "/action/ws_pack/application/activate?guid=" . $entity->getGUID(),
+							"is_action" => true,
+							"priority" => 100
+						));
+						
+						break;
+					case ErrorResult::$RESULT_FAIL_APIKEY_INACTIVE:
+						// inactive
+						$result[] = ElggMenuItem::factory(array(
+							"name" => "status",
+							"text" => elgg_echo("ws_pack:api:application:status:inactive"),
+							"href" => false,
+							"priority" => 50
+						));
+						
+						$result[] = ElggMenuItem::factory(array(
+							"name" => "activate",
+							"text" => elgg_echo("ws_pack:activate"),
+							"href" => "/action/ws_pack/application/activate?guid=" . $entity->getGUID(),
+							"is_action" => true,
+							"priority" => 100
+						));
+						
+						$result[] = ElggMenuItem::factory(array(
+							"name" => "disable",
+							"text" => elgg_echo("disable"),
+							"href" => "/action/ws_pack/application/disable?guid=" . $entity->getGUID(),
+							"is_action" => true,
+							"priority" => 200
+						));
+						
+						break;
+				}
 			}
-			
 		}
 		
 		return $result;
@@ -192,7 +193,7 @@
 			if ($api_user = get_api_user($site->getGUID(), $params)) {
 				// check if we're using our API application
 				if ($api_application = ws_pack_get_application_from_api_user_id($api_user->id)) {
-					// store the API application for later use 
+					// store the API application for later use
 					ws_pack_set_current_api_application($api_application);
 				}
 			}
@@ -211,6 +212,37 @@
 			}
 		}
 	
+		return $result;
+	}
+	
+	function ws_pack_annotation_menu_hook_handler($hook, $type, $returnvalue, $params) {
+		$result = $returnvalue;
+		
+		if (!empty($params) && is_array($params)) {
+			$annotation = elgg_extract("annotation", $params);
+			if (($api_user_settings = $annotation->getEntity()) && elgg_instanceof($api_user_settings, "object", APIApplicationUserSetting::SUBTYPE)) {
+				
+				$result[] = ElggMenuItem::factory(array(
+					"name" => "delete",
+					"text" => elgg_view_icon("delete"),
+					"confirm" => elgg_echo("ws_pack:annotation:push_notification_service:delete_confirm"),
+					"href" => "action/ws_pack/push_service/delete_user?id=" . $annotation->id,
+					"is_action" => true,
+					"priority" => 500
+				));
+				
+				if (elgg_is_admin_logged_in()) {
+					$result[] = ElggMenuItem::factory(array(
+						"name" => "settings",
+						"text" => elgg_echo("ws_pack:annotation:push_notification_service:settings"),
+						"href" => "#ws-pack-annotation-" . $annotation->id,
+						"rel" => "toggle",
+						"priority" => 250
+					));
+				}
+			}
+		}
+		
 		return $result;
 	}
 	
