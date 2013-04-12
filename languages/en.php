@@ -20,7 +20,7 @@
 Active: These applications are allowed to use the API.
 Pending: These applications have requested access to the API, you need to approve or reject this request.
 Inactive: These applications have been (temporaraly) disabled.
-Disabled: These applications have been denied access to teh API.",
+Disabled: These applications have been denied access to the API.",
 		
 		// plugin settings
 		'ws_pack:settings:allow_application_registration' => "Allow new applications to register for API usage",
