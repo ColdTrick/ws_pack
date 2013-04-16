@@ -10,7 +10,7 @@
 	);
 	
 	if (!($content = elgg_list_entities($options))) {
-		$content = elgg_ehco("ws_pack:usersettings:none");
+		$content = elgg_echo("ws_pack:usersettings:none");
 	}
 	
 	echo $content;
