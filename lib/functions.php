@@ -457,3 +457,20 @@
 		return $result;
 	}
 	
+	function ws_pack_shutdown_user_counter() {
+		
+		if ($user = elgg_get_logged_in_user_entity()) {
+			$options = array(
+				"type" => "object",
+				"subtype" => APIApplicationUserSetting::SUBTYPE,
+				"owner_guid" => $user->getGUID(),
+				"limit" => false
+			);
+			
+			if ($api_user_settings = elgg_get_entities($options)) {
+				foreach ($api_user_settings as $api_user_setting) {
+					$api_user_setting->resetPushNotificationCounter();
+				}
+			}
+		}
+	}

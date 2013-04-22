@@ -275,13 +275,28 @@
 											if ($data = json_decode($annotation->value, true)) {
 												$channel = elgg_extract("channel", $data);
 												$user_id = elgg_extract("user_id", $data);
+												$count = (int) elgg_extract("count", $data, 0);
 												
 												if(!empty($channel) && !empty($user_id)) {
+													// increase count by one
+													$count++;
+													
+													// group by channel
 													if (!array_key_exists($channel, $channels)) {
 														$channels[$channel] = array();
 													}
 													
-													$channels[$channel][] = $user_id;
+													// group by count
+													if (!array_key_exists($count, $channels[$channel])) {
+														$channels[$channel][$count] = array();
+													}
+													
+													$channels[$channel][$count][] = $user_id;
+													
+													// save an update
+													$data["count"] = $count;
+													$annotation->value = json_encode($data);
+													$annotation->save();
 												}
 											}
 										}

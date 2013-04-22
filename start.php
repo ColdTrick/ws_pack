@@ -68,6 +68,8 @@
 		elgg_register_action("ws_pack/push_service/delete", dirname(__FILE__) . "/actions/push_service/delete.php", "admin");
 		elgg_register_action("ws_pack/push_service/delete_user", dirname(__FILE__) . "/actions/push_service/delete_user.php");
 		
+		// register shutdown function
+		register_shutdown_function("ws_pack_shutdown_user_counter");
 	}
 	
 	function ws_pack_pagesetup() {

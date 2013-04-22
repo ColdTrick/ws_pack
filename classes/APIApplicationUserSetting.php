@@ -66,4 +66,21 @@
 				
 			return $result;
 		}
+		
+		public function resetPushNotificationCounter() {
+			$result = false;
+			
+			if ($appcelerator_settings = $this->getAnnotations("appcelerator", 1)) {
+				$appcelerator_setting = $appcelerator_settings[0];
+				
+				if ($settings = json_decode($appcelerator_setting->value, true)) {
+					$settings["count"] = 0;
+					
+					$appcelerator_setting->value = json_encode($settings);
+					$appcelerator_setting->save();
+				}
+			}
+			
+			return $result;
+		}
 	}
