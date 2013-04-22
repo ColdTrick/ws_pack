@@ -84,7 +84,7 @@
 					$result = self::STATE_PENDING;
 				}
 			} else {
-				// this application has been disabled 
+				// this application has been disabled
 				$result = ErrorResult::$RESULT_FAIL_APIKEY_DISABLED;
 			}
 			
@@ -269,25 +269,29 @@
 								
 								switch ($service_name) {
 									case "appcelerator":
-										$to_ids = array();
-										$channel = "";
+										$channels = array();
 										
 										foreach($annotations as $annotation) {
 											if ($data = json_decode($annotation->value, true)) {
-												if (empty($channel) && isset($data["channel"])) {
-													$channel = $data["channel"];
-												}
+												$channel = elgg_extract("channel", $data);
+												$user_id = elgg_extract("user_id", $data);
 												
-												if(isset($data["user_id"])) {
-													$to_ids[] = $data["user_id"];
+												if(!empty($channel) && !empty($user_id)) {
+													if (!array_key_exists($channel, $channels)) {
+														$channels[$channel] = array();
+													}
+													
+													$channels[$channel][] = $user_id;
 												}
 											}
 										}
 										
-										if(!empty($channel) && !empty($to_ids)) {
+										if(!empty($channels)) {
 											$push_service = new $classname($settings);
 											
-											$push_service->sendMessage($message, $channel, $to_ids);
+											foreach ($channels as $channel => $to_ids) {
+												$push_service->sendMessage($message, $channel, $to_ids);
+											}
 										}
 										
 										break;
