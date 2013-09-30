@@ -1,5 +1,9 @@
 = Version History =
 
+x.x:
+
+- fixed: auth_gettoken not working with email address
+
 1.0:
 
 - first release

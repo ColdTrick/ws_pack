@@ -4,7 +4,7 @@
 	
 	function ws_pack_auth_expose_functions(){
 		expose_function(
-			"auth.get_api_keys", 
+			"auth.get_api_keys",
 			"ws_pack_auth_get_api_keys",
 			array(
 				"application_id" => array(
@@ -37,17 +37,32 @@
 			false
 		);
 		
+		// reregister login function to allow login by email
+		unexpose_function("auth.gettoken");
+		expose_function(
+			"auth.gettoken",
+			"ws_pack_auth_gettoken",
+			array(
+				"username" => array ("type" => "string"),
+				"password" => array ("type" => "string"),
+			),
+			elgg_echo("auth.gettoken"),
+			"POST",
+			false,
+			false
+		);
+		
 	}
 	
 	/**
 	 * Get API keys for your application,
-	 * 
+	 *
 	 * @param string $application_id => a unique id for your application
 	 * @param string $title => the title/name of your application
 	 * @param string $description => an optional description of your application
 	 * @param string $icon_url => an optional URL to the icon for your application
 	 * @param array $application_info => more information in a key => value array
-	 * 
+	 *
 	 * @return request status || API keys
 	 */
 	function ws_pack_auth_get_api_keys($application_id, $title, $description = "", $icon_url = "", $application_info = array()){
@@ -93,5 +108,36 @@
 		}
 		
 		return $result;
+	}
+	
+	/**
+	 * Allow login by username/email and password
+	 *
+	 * @param string $username
+	 * @param string $password
+	 * @throws SecurityException
+	 * @return Ambigous <boolean, string>
+	 */
+	function ws_pack_auth_gettoken($username, $password) {
+		// check if username is an email address
+		if (is_email_address($username)) {
+			$users = get_user_by_email($username);
+			
+			// check if we have a unique user
+			if (is_array($users) && (count($users) == 1)) {
+				$username = $users[0]->username;
+			}
+		}
+		
+		// validate username and password
+		if (true === elgg_authenticate($username, $password)) {
+			$token = create_user_token($username);
+			
+			if ($token) {
+				return $token;
+			}
+		}
+		
+		throw new SecurityException(elgg_echo("SecurityException:authenticationfailed"));
 	}
 	
