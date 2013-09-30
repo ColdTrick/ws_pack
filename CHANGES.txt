@@ -4,6 +4,6 @@ x.x:
 
 - fixed: auth_gettoken not working with email address
 
-1.0:
+1.0 (2013-04-22):
 
 - first release
