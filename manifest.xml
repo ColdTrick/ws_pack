@@ -5,8 +5,10 @@
 	<version>1.0</version>
 	<description>Adds different webservices functions to the Elgg (REST) API</description>
 	<website>http://www.coldtrick.com/</website>
+	<repository>https://github.com/ColdTrick/ws_pack</repository>
+	<bugtracker>https://github.com/ColdTrick/ws_pack/issues</bugtracker>
 	<copyright>(C) ColdTrick IT Solutions 2013</copyright>
-	<license>GNU Public License version 2</license>
+	<license>GNU General Public License version 2</license>
  	
  	<requires>
 		<type>elgg_release</type>
