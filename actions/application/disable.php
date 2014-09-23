@@ -1,25 +1,25 @@
 <?php
 
-	$guid = (int) get_input("guid");
-	
-	if (!empty($guid)) {
-		if ($entity = get_entity($guid)) {
-			if (elgg_instanceof($entity, "object", APIApplication::SUBTYPE)) {
-				$title = $entity->getTitle();
-				
-				if ($entity->disable()) {
-					system_message(elgg_echo("ws_pack:action:application:disable:success", array($title)));
-				} else {
-					register_error(elgg_echo("ws_pack:action:application:disable:error", array($title)));
-				}
+$guid = (int) get_input("guid");
+
+if (!empty($guid)) {
+	if ($entity = get_entity($guid)) {
+		if (elgg_instanceof($entity, "object", APIApplication::SUBTYPE)) {
+			$title = $entity->getTitle();
+			
+			if ($entity->disable()) {
+				system_message(elgg_echo("ws_pack:action:application:disable:success", array($title)));
 			} else {
-				register_error(elgg_echo("ClassException:ClassnameNotClass", array(elgg_echo("item:object:ws_pack_application"))));
+				register_error(elgg_echo("ws_pack:action:application:disable:error", array($title)));
 			}
 		} else {
-			register_error(elgg_echo("InvalidParameterException:GUIDNotFound", array($guid)));
+			register_error(elgg_echo("ClassException:ClassnameNotClass", array(elgg_echo("item:object:ws_pack_application"))));
 		}
 	} else {
-		register_error(elgg_echo("InvalidParameterException:MissingParameter"));
+		register_error(elgg_echo("InvalidParameterException:GUIDNotFound", array($guid)));
 	}
-	
-	forward(REFERER);
+} else {
+	register_error(elgg_echo("InvalidParameterException:MissingParameter"));
+}
+
+forward(REFERER);

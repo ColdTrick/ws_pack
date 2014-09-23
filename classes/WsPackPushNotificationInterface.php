@@ -1,7 +1,7 @@
 <?php
 
-	interface WsPackPushNotificationInterface {
-		
-		public function sendMessage($text = "");
-		
-	}
+interface WsPackPushNotificationInterface {
+	
+	public function sendMessage($text = "");
+	
+}
