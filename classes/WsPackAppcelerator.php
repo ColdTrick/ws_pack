@@ -2,7 +2,7 @@
 /**
  * Appcelerator push notification service
  *
- * @package ws_pack
+ * @package WsPack
  */
 class WsPackAppcelerator extends WsPackPushNotificationService {
 	
@@ -30,6 +30,7 @@ class WsPackAppcelerator extends WsPackPushNotificationService {
 	
 	/**
 	 * Sends a message
+	 * 
 	 * @param string $text    message to be sent
 	 * @param string $channel channel of the message
 	 * @param array  $to_ids  array of ids to send the message to

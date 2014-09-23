@@ -2,7 +2,7 @@
 /**
  * API Application user settings object
  *
- * @package ws_pack
+ * @package WsPack
  */
 class APIApplicationUserSetting extends ElggObject {
 	
@@ -23,7 +23,7 @@ class APIApplicationUserSetting extends ElggObject {
 	/**
 	 * Register for push notification service
 	 * 
-	 * @param string $service_name name of the service
+	 * @param string $service_name  name of the service
 	 * @param array  $settings user settings related to the service
 	 * 
 	 * @return boolean

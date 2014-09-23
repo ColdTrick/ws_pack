@@ -2,7 +2,7 @@
 /**
  * API Application object
  *
- * @package ws_pack
+ * @package WsPack
  */
 class APIApplication extends ElggObject {
 	
@@ -31,6 +31,9 @@ class APIApplication extends ElggObject {
 	
 	/**
 	 * Also deactivate the api_user when disabling the API application
+	 * 
+	 * @param string  $reason    reason for disabling
+	 * @param boolean $recursive set to true to disable recursively
 	 * 
 	 * @return boolean
 	 * 
@@ -348,6 +351,8 @@ class APIApplication extends ElggObject {
 	 * 
 	 * @param string $message              text of the message
 	 * @param array  $potential_user_guids potential user guids
+	 * 
+	 * @return void
 	 */
 	function sendPushNotification($message, $potential_user_guids) {
 		
@@ -377,13 +382,13 @@ class APIApplication extends ElggObject {
 								case "appcelerator":
 									$channels = array();
 									
-									foreach($annotations as $annotation) {
+									foreach ($annotations as $annotation) {
 										if ($data = json_decode($annotation->value, true)) {
 											$channel = elgg_extract("channel", $data);
 											$user_id = elgg_extract("user_id", $data);
 											$count = (int) elgg_extract("count", $data, 0);
 											
-											if(!empty($channel) && !empty($user_id)) {
+											if (!empty($channel) && !empty($user_id)) {
 												// increase count by one
 												$count++;
 												
@@ -407,7 +412,7 @@ class APIApplication extends ElggObject {
 										}
 									}
 									
-									if(!empty($channels)) {
+									if (!empty($channels)) {
 										$push_service = new $classname($settings);
 										
 										foreach ($channels as $channel => $to_ids) {

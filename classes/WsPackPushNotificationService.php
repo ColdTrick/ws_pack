@@ -2,7 +2,7 @@
 /**
  * Abstract Class for PushNotification Services
  *
- * @package ws_pack
+ * @package WsPack
  */
 abstract class WsPackPushNotificationService implements WsPackPushNotificationInterface {
 	
@@ -10,6 +10,8 @@ abstract class WsPackPushNotificationService implements WsPackPushNotificationIn
 	 * Function to log data related to the push notification service. Debug purposes
 	 * 
 	 * @param array $content data to be logged
+	 * 
+	 * @return void
 	 */
 	abstract protected function log(array $content);
 }
