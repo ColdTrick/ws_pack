@@ -21,7 +21,7 @@ $options = array(
 switch($tab){
 	case "pending":
 		$dbprefix = elgg_get_config("dbprefix");
-		$api_user_id = add_metastring("api_user_id");
+		$api_user_id = elgg_get_metastring_id("api_user_id");
 		
 		$options["wheres"] = array("NOT EXISTS (
 			SELECT 1
