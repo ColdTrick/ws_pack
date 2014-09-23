@@ -80,7 +80,8 @@ function ws_pack_system_api_register_push_notification_service($service_name, $s
 /**
  * Unregister a push notifications from the current api application
  * 
- * @param string $service_name
+ * @param string $service_name name of the service
+ * 
  * @return ErrorResult|SuccessResult
  */
 function ws_pack_system_api_unregister_push_notification_service($service_name) {

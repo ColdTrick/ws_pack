@@ -7,7 +7,7 @@
  * Adds admin menu items
  *
  * @param string $hook        name of the hook
- * @param string $entity      type of the hook
+ * @param string $type        type of the hook
  * @param string $returnvalue current return value
  * @param array  $params      hook parameters
  *
@@ -54,7 +54,7 @@ function ws_pack_applications_menu_hook_handler($hook, $type, $returnvalue, $par
  * Adds entity menu items
  *
  * @param string $hook        name of the hook
- * @param string $entity      type of the hook
+ * @param string $type        type of the hook
  * @param string $returnvalue current return value
  * @param array  $params      hook parameters
  *
@@ -182,7 +182,7 @@ function ws_pack_entity_menu_hook_handler($hook, $type, $returnvalue, $params) {
  * The REST API is being called, check which library is needed
  *
  * @param string $hook        name of the hook
- * @param string $entity      type of the hook
+ * @param string $type        type of the hook
  * @param string $returnvalue current return value
  * @param array  $params      hook parameters
  *
@@ -216,7 +216,7 @@ function ws_pack_rest_init_hook_handler($hook, $type, $returnvalue, $params) {
  * Store the used API application for future use
  *
  * @param string $hook        name of the hook
- * @param string $entity      type of the hook
+ * @param string $type        type of the hook
  * @param string $returnvalue current return value
  * @param array  $params      hook parameters
  *
@@ -242,7 +242,7 @@ function ws_pack_api_key_use_hook_handler($hook, $type, $returnvalue, $params) {
  * Container write permission hook
  *
  * @param string $hook        name of the hook
- * @param string $entity      type of the hook
+ * @param string $type        type of the hook
  * @param string $returnvalue current return value
  * @param array  $params      hook parameters
  *
@@ -267,7 +267,7 @@ function ws_pack_container_write_hook_handler($hook, $type, $returnvalue, $param
  * Adds annotation menu items
  *
  * @param string $hook        name of the hook
- * @param string $entity      type of the hook
+ * @param string $type        type of the hook
  * @param string $returnvalue current return value
  * @param array  $params      hook parameters
  *
