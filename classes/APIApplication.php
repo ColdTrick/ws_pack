@@ -40,7 +40,7 @@ class APIApplication extends ElggObject {
 	 * @see ElggEntity::disable()
 	 */
 	function disable($reason = "", $recursive = true) {
-		if(isset($this->api_user_id)){
+		if (isset($this->api_user_id)) {
 			ws_pack_deactivate_api_user_from_id($this->api_user_id);
 	
 			unset($this->api_user);
@@ -76,7 +76,7 @@ class APIApplication extends ElggObject {
 	 * @see ElggEntity::getIconURL()
 	 */
 	function getIconURL($size = "medium") {
-		if(isset($this->icon_url)){
+		if (isset($this->icon_url)) {
 			return $this->icon_url;
 		} else {
 			return parent::getIconURL($size);
@@ -94,7 +94,7 @@ class APIApplication extends ElggObject {
 	 */
 	function delete($recursive = true) {
 		
-		if($keys = $this->getApiKeys()) {
+		if ($keys = $this->getApiKeys()) {
 			remove_api_user($this->site_guid, $keys["api_key"]);
 		}
 		
@@ -125,8 +125,6 @@ class APIApplication extends ElggObject {
 	 * @return SuccessResult|ErrorResult
 	 */
 	function getStatusCode() {
-		$result = false;
-		
 		// is this entity enabled
 		if ($this->isEnabled()) {
 			// does it have a connected API user
@@ -185,8 +183,6 @@ class APIApplication extends ElggObject {
 	 * @return boolean
 	 */
 	function deactivate() {
-		$result = false;
-		
 		if (isset($this->api_user_id)) {
 			$result = ws_pack_deactivate_api_user_from_id($this->api_user_id);
 		} else {
@@ -266,7 +262,7 @@ class APIApplication extends ElggObject {
 		
 		if (!empty($service_name)) {
 			if ($services = $this->getAnnotations("push_notification_service", false)) {
-				foreach($services as $service) {
+				foreach ($services as $service) {
 					if ($value = $service->value) {
 						if ($value = json_decode($value, true)) {
 							if (array_key_exists($service_name, $value)) {
@@ -294,7 +290,7 @@ class APIApplication extends ElggObject {
 		
 		if ($services = $this->getAnnotations("push_notification_service", false)) {
 			
-			if(empty($get_annotations)) {
+			if (empty($get_annotations)) {
 				$tmp_result = array();
 				
 				foreach ($services as $service) {
@@ -330,7 +326,7 @@ class APIApplication extends ElggObject {
 		
 		if (!empty($service_name)) {
 			if ($services = $this->getAnnotations("push_notification_service", false)) {
-				foreach($services as $service) {
+				foreach ($services as $service) {
 					if ($value = $service->value) {
 						if ($value = json_decode($value, true)) {
 							if (array_key_exists($service_name, $value)) {
@@ -356,14 +352,14 @@ class APIApplication extends ElggObject {
 	 */
 	function sendPushNotification($message, $potential_user_guids) {
 		
-		if(!empty($message) && !empty($potential_user_guids)) {
-			if(!is_array($potential_user_guids)) {
+		if (!empty($message) && !empty($potential_user_guids)) {
+			if (!is_array($potential_user_guids)) {
 				$potential_user_guids = array($potential_user_guids);
 			}
 			
-			if($push_services = $this->getPushNotificationServices()) {
+			if ($push_services = $this->getPushNotificationServices()) {
 				
-				foreach($push_services as $service_name => $settings) {
+				foreach ($push_services as $service_name => $settings) {
 					$classname = "WsPack" . ucfirst($service_name);
 					
 					if (class_exists($classname)) {

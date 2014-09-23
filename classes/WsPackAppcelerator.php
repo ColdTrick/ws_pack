@@ -17,7 +17,7 @@ class WsPackAppcelerator extends WsPackPushNotificationService {
 	/**
 	 * Class constructor
 	 * 
-	 * @param array $settings
+	 * @param array $settings array of settings related to appcelerator
 	 * 
 	 * @return void
 	 */
@@ -159,7 +159,7 @@ class WsPackAppcelerator extends WsPackPushNotificationService {
 			}
 			
 			if (isset($api_result["meta"]) && isset($api_result["meta"]["status"])) {
-				if($api_result["meta"]["status"] == "ok") {
+				if ($api_result["meta"]["status"] == "ok") {
 					$result = true;
 				}
 			}

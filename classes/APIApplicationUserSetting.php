@@ -23,22 +23,22 @@ class APIApplicationUserSetting extends ElggObject {
 	/**
 	 * Register for push notification service
 	 * 
-	 * @param string $service_name  name of the service
-	 * @param array  $settings user settings related to the service
+	 * @param string $service_name name of the service
+	 * @param array  $settings     user settings related to the service
 	 * 
 	 * @return boolean
 	 */
 	public function registerForPushNotifications($service_name, $settings) {
 		$result = false;
 		
-		if(!empty($service_name) && !empty($settings)) {
-			if(!is_array($settings)) {
+		if (!empty($service_name) && !empty($settings)) {
+			if (!is_array($settings)) {
 				$settings = array($settings);
 			}
 			
 			switch ($service_name) {
 				case "appcelerator":
-					if($this->getPushNotificationSettings($service_name)) {
+					if ($this->getPushNotificationSettings($service_name)) {
 						$this->unregisterFromPushNotifications($service_name);
 					}
 					
@@ -60,8 +60,7 @@ class APIApplicationUserSetting extends ElggObject {
 	public function unregisterFromPushNotifications($service_name) {
 		$result = false;
 		
-		if(!empty($service_name)) {
-			
+		if (!empty($service_name)) {
 			switch ($service_name) {
 				case "appcelerator":
 					$result = $this->deleteAnnotations($service_name);
@@ -82,8 +81,7 @@ class APIApplicationUserSetting extends ElggObject {
 	public function getPushNotificationSettings($service_name) {
 		$result = false;
 			
-		if(!empty($service_name)) {
-		
+		if (!empty($service_name)) {
 			switch ($service_name) {
 				case "appcelerator":
 					if ($settings = $this->getAnnotations($service_name, 1)) {
