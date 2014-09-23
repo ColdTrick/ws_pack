@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Appcelerator push notification service
+ *
+ * @package ws_pack
+ */
 class WsPackAppcelerator extends WsPackPushNotificationService {
 	
 	const SERVICE_NAME = "appcelerator";
@@ -10,6 +14,13 @@ class WsPackAppcelerator extends WsPackPushNotificationService {
 	private $settings;
 	private $login_cookie;
 	
+	/**
+	 * Class constructor
+	 * 
+	 * @param array $settings
+	 * 
+	 * @return void
+	 */
 	public function __construct($settings) {
 		
 		if (!empty($settings) && is_array($settings)) {
@@ -17,6 +28,16 @@ class WsPackAppcelerator extends WsPackPushNotificationService {
 		}
 	}
 	
+	/**
+	 * Sends a message
+	 * @param string $text    message to be sent
+	 * @param string $channel channel of the message
+	 * @param array  $to_ids  array of ids to send the message to
+	 * 
+	 * @see WsPackPushNotificationInterface::sendMessage()
+	 * 
+	 * @return boolean
+	 */
 	public function sendMessage($text = "", $channel = "", $to_ids = array()) {
 		$result = false;
 		
@@ -64,6 +85,11 @@ class WsPackAppcelerator extends WsPackPushNotificationService {
 		return $result;
 	}
 	
+	/**
+	 * Login to the Appcelerator service
+	 * 
+	 * @return boolean
+	 */
 	private function login() {
 		$result = false;
 		
@@ -97,6 +123,13 @@ class WsPackAppcelerator extends WsPackPushNotificationService {
 		return $result;
 	}
 	
+	/**
+	 * Returns a service setting
+	 * 
+	 * @param string $setting name of the settings
+	 * 
+	 * @return boolean|string
+	 */
 	private function getSetting($setting) {
 		$result = false;
 		
@@ -109,6 +142,13 @@ class WsPackAppcelerator extends WsPackPushNotificationService {
 		return $result;
 	}
 	
+	/**
+	 * Validates the API result
+	 * 
+	 * @param string $api_result result of an API call
+	 * 
+	 * @return boolean
+	 */
 	private function validateApiResult($api_result) {
 		$result = false;
 		
@@ -127,6 +167,15 @@ class WsPackAppcelerator extends WsPackPushNotificationService {
 		return $result;
 	}
 	
+	/**
+	 * Logs data to a file for debug purposes
+	 * 
+	 * @param array $contents data to be logged
+	 * 
+	 * @return int|boolean
+	 * 
+	 * @see WsPackPushNotificationService::log()
+	 */
 	protected function log(array $contents) {
 		$dataroot = elgg_get_config("dataroot");
 		$site = elgg_get_site_entity();

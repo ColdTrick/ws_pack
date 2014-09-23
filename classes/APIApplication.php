@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * API Application object
+ *
+ * @package ws_pack
+ */
 class APIApplication extends ElggObject {
 	
 	const SUBTYPE = "ws_pack_application";
@@ -7,7 +11,13 @@ class APIApplication extends ElggObject {
 	
 	protected $api_user;
 	
-	// overrule / extend some parent functions
+	/**
+	 * overrule / extend some parent functions
+	 * 
+	 * @return void
+	 * 
+	 * @see ElggObject::initializeAttributes()
+	 */
 	protected function initializeAttributes() {
 		parent::initializeAttributes();
 		
@@ -19,6 +29,13 @@ class APIApplication extends ElggObject {
 		$this->attributes["container_guid"] = $site->getGUID();
 	}
 	
+	/**
+	 * Also deactivate the api_user when disabling the API application
+	 * 
+	 * @return boolean
+	 * 
+	 * @see ElggEntity::disable()
+	 */
 	function disable($reason = "", $recursive = true) {
 		if(isset($this->api_user_id)){
 			ws_pack_deactivate_api_user_from_id($this->api_user_id);
@@ -29,6 +46,13 @@ class APIApplication extends ElggObject {
 		return parent::disable($reason, $recursive);
 	}
 	
+	/**
+	 * Also activate the api_user when enabling the API application
+	 *
+	 * @return boolean
+	 *
+	 * @see ElggEntity::enable()
+	 */
 	function enable() {
 		$result = parent::enable();
 			
@@ -39,6 +63,15 @@ class APIApplication extends ElggObject {
 		return $result;
 	}
 	
+	/**
+	 * Returns icon url for the application
+	 * 
+	 * @param string $size icon size
+	 * 
+	 * @return string
+	 * 
+	 * @see ElggEntity::getIconURL()
+	 */
 	function getIconURL($size = "medium") {
 		if(isset($this->icon_url)){
 			return $this->icon_url;
@@ -47,6 +80,15 @@ class APIApplication extends ElggObject {
 		}
 	}
 	
+	/**
+	 * Also remove API user when deleting the object
+	 * 
+	 * @param boolean $recursive if the delete should be recursive
+	 * 
+	 * @return boolean
+	 * 
+	 * @see ElggEntity::delete()
+	 */
 	function delete($recursive = true) {
 		
 		if($keys = $this->getApiKeys()) {
@@ -56,15 +98,29 @@ class APIApplication extends ElggObject {
 		return parent::delete($recursive);
 	}
 	
-	// new functions
+	/**
+	 * Returns the title of the application
+	 * 
+	 * @return string
+	 */
 	function getTitle() {
 		return $this->title;
 	}
 	
+	/**
+	 * Returns the description of the application
+	 *
+	 * @return string
+	 */
 	function getDescription() {
 		return $this->description;
 	}
 	
+	/**
+	 * Returns the status code
+	 *
+	 * @return SuccessResult|ErrorResult
+	 */
 	function getStatusCode() {
 		$result = false;
 		
@@ -91,6 +147,11 @@ class APIApplication extends ElggObject {
 		return $result;
 	}
 	
+	/**
+	 * Activates the API application
+	 *
+	 * @return boolean
+	 */
 	function activate() {
 		$result = false;
 		
@@ -115,6 +176,11 @@ class APIApplication extends ElggObject {
 		return $result;
 	}
 	
+	/**
+	 * Deactivates the API application
+	 *
+	 * @return boolean
+	 */
 	function deactivate() {
 		$result = false;
 		
@@ -127,6 +193,11 @@ class APIApplication extends ElggObject {
 		return $result;
 	}
 	
+	/**
+	 * Returns the API keys
+	 *
+	 * @return array|boolean
+	 */
 	function getApiKeys() {
 		$result = false;
 		
@@ -146,6 +217,14 @@ class APIApplication extends ElggObject {
 		return $result;
 	}
 	
+	/**
+	 * Registers a push notification service to the API application
+	 * 
+	 * @param string $service_name name of the service
+	 * @param array  $settings     additional settings to be save with the notification service
+	 *
+	 * @return boolean
+	 */
 	function registerPushNotificationService($service_name, $settings) {
 		$result = false;
 		
@@ -172,6 +251,13 @@ class APIApplication extends ElggObject {
 		return $result;
 	}
 	
+	/**
+	 * Returns a notification service settings
+	 * 
+	 * @param string $service_name service name
+	 * 
+	 * @return array|boolean
+	 */
 	function getPushNotificationService($service_name) {
 		$result = false;
 		
@@ -193,6 +279,13 @@ class APIApplication extends ElggObject {
 		return $result;
 	}
 	
+	/**
+	 * Returns all push notifcation services
+	 * 
+	 * @param boolean $get_annotations set to true to return the annotations instead of an array with settings
+	 * 
+	 * @return array|boolean
+	 */
 	function getPushNotificationServices($get_annotations = false) {
 		$result = false;
 		
@@ -222,6 +315,13 @@ class APIApplication extends ElggObject {
 		return $result;
 	}
 	
+	/**
+	 * Unregister a push notification service
+	 * 
+	 * @param string $service_name name of the service
+	 * 
+	 * @return boolean
+	 */
 	function unregisterPushNotificationService($service_name) {
 		$result = false;
 		
@@ -243,6 +343,12 @@ class APIApplication extends ElggObject {
 		return $result;
 	}
 	
+	/**
+	 * Send a push notification
+	 * 
+	 * @param string $message              text of the message
+	 * @param array  $potential_user_guids potential user guids
+	 */
 	function sendPushNotification($message, $potential_user_guids) {
 		
 		if(!empty($message) && !empty($potential_user_guids)) {

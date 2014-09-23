@@ -1,10 +1,18 @@
 <?php
-
+/**
+ * API Application user settings object
+ *
+ * @package ws_pack
+ */
 class APIApplicationUserSetting extends ElggObject {
 	
 	const SUBTYPE = "ws_pack_application_user_setting";
 	
-	// overrule / extend some parent functions
+	/**
+	 * overrule / extend some parent functions
+	 * 
+	 * @return void
+	 */ 
 	protected function initializeAttributes() {
 		parent::initializeAttributes();
 			
@@ -12,7 +20,14 @@ class APIApplicationUserSetting extends ElggObject {
 		$this->attributes["access_id"] = ACCESS_PRIVATE;
 	}
 	
-	// own functions
+	/**
+	 * Register for push notification service
+	 * 
+	 * @param string $service_name name of the service
+	 * @param array  $settings user settings related to the service
+	 * 
+	 * @return boolean
+	 */
 	public function registerForPushNotifications($service_name, $settings) {
 		$result = false;
 		
@@ -35,6 +50,13 @@ class APIApplicationUserSetting extends ElggObject {
 		return $result;
 	}
 	
+	/**
+	 * Unregister from a push notification service
+	 * 
+	 * @param string $service_name name of the service
+	 * 
+	 * @return boolean
+	 */
 	public function unregisterFromPushNotifications($service_name) {
 		$result = false;
 		
@@ -50,6 +72,13 @@ class APIApplicationUserSetting extends ElggObject {
 		return $result;
 	}
 	
+	/**
+	 * Returns an array of settings for a given notifcation service
+	 * 
+	 * @param string $service_name name of the service
+	 * 
+	 * @return array|boolean
+	 */
 	public function getPushNotificationSettings($service_name) {
 		$result = false;
 			
@@ -67,9 +96,12 @@ class APIApplicationUserSetting extends ElggObject {
 		return $result;
 	}
 	
+	/**
+	 * Resets the push notification counter for the services
+	 * 
+	 * @return void
+	 */
 	public function resetPushNotificationCounter() {
-		$result = false;
-		
 		if ($appcelerator_settings = $this->getAnnotations("appcelerator", 1)) {
 			$appcelerator_setting = $appcelerator_settings[0];
 			
@@ -80,7 +112,5 @@ class APIApplicationUserSetting extends ElggObject {
 				$appcelerator_setting->save();
 			}
 		}
-		
-		return $result;
 	}
 }
