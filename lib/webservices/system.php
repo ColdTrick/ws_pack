@@ -1,7 +1,14 @@
 <?php
-
+/**
+ * System webservices for ws_pack
+ */
 ws_pack_system_expose_functions();
 
+/**
+ * Exposes the system functions
+ *
+ * @return void
+ */
 function ws_pack_system_expose_functions() {
 	expose_function(
 		"system.api.register_push_notification_service", 
@@ -36,9 +43,16 @@ function ws_pack_system_expose_functions() {
 		true,
 		false
 	);
-	
 }
 
+/**
+ * Register a push notification service to the current api application
+ * 
+ * @param string $service_name name of the notification service
+ * @param array  $settings     settings for this service
+ * 
+ * @return ErrorResult|SuccessResult
+ */
 function ws_pack_system_api_register_push_notification_service($service_name, $settings) {
 	$result = false;
 	
@@ -63,6 +77,12 @@ function ws_pack_system_api_register_push_notification_service($service_name, $s
 	return $result;
 }
 
+/**
+ * Unregister a push notifications from the current api application
+ * 
+ * @param string $service_name
+ * @return ErrorResult|SuccessResult
+ */
 function ws_pack_system_api_unregister_push_notification_service($service_name) {
 	$result = false;
 	

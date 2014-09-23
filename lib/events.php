@@ -1,16 +1,28 @@
 <?php
+/**
+ * Events for ws_pack
+ */
 
+/**
+ * Send push notifications if event is added to the activity river
+ * 
+ * @param string        $event      name of the event
+ * @param string        $type       type of the event
+ * @param ElggRiverItem $river_item river item object
+ * 
+ * @return void
+ */
 function ws_pack_created_river_event_handler($event, $type, $river_item) {
 	
-	if(!empty($river_item) && ($river_item instanceof ElggRiverItem)) {
+	if (!empty($river_item) && ($river_item instanceof ElggRiverItem)) {
 		
 		elgg_load_library("simple_html_dom");
 		
 		$message = "";
 		$html_view = elgg_view_river_item($river_item);
-		if($res = str_get_html($html_view)) {
+		if ($res = str_get_html($html_view)) {
 			// get the river summary
-			if($summary_element = $res->find("div.elgg-river-summary")) {
+			if ($summary_element = $res->find("div.elgg-river-summary")) {
 				$summary_element = $summary_element[0];
 					
 				$text = $summary_element->innertext();
@@ -71,7 +83,7 @@ function ws_pack_created_river_event_handler($event, $type, $river_item) {
 				);
 				
 				if ($api_applications = elgg_get_entities_from_annotations($api_application_options)) {
-					foreach($api_applications as $api_application) {
+					foreach ($api_applications as $api_application) {
 						$api_application->sendPushNotification($message, $user_guids);
 					}
 				}

@@ -17,7 +17,7 @@ if (elgg_is_admin_logged_in()) {
 	if (($value = $annotation->value) && ($settings = json_decode($value, true))) {
 		$settings_list = "<div id='ws-pack-annotation-" . $annotation->id . "' class='hidden plm'>";
 		
-		foreach($settings as $key => $value) {
+		foreach ($settings as $key => $value) {
 			$settings_list .= "<label>" . $key . ": </label>" . $value . "<br />";
 		}
 		

@@ -1,8 +1,18 @@
 <?php
+/**
+ * Events for ws_pack
+ */
 
 global $ws_pack_current_api_application;
 
-function ws_pack_get_application_from_id($application_id){
+/**
+ * Return application for a given application id
+ * 
+ * @param string $application_id id of the applications
+ * 
+ * @return ElggEntity|boolean
+ */
+function ws_pack_get_application_from_id($application_id) {
 	$result = false;
 	
 	if (!empty($application_id)) {
@@ -28,6 +38,17 @@ function ws_pack_get_application_from_id($application_id){
 	return $result;
 }
 
+/**
+ * Create a new application
+ * 
+ * @param string $application_id   id op the app
+ * @param string $title            name of the app
+ * @param string $description      description of the app
+ * @param string $icon_url         url to an icon
+ * @param array  $application_info array containing additional data about the application
+ * 
+ * @return APIApplication|boolean
+ */
 function ws_pack_create_application($application_id, $title, $description = "", $icon_url = "", $application_info = array()) {
 	$result = false;
 	
@@ -75,6 +96,13 @@ function ws_pack_create_application($application_id, $title, $description = "", 
 	return $result;
 }
 
+/**
+ * Returns the application related to a given api user
+ * 
+ * @param string $api_user_id id of the api user
+ * 
+ * @return APIApplication|boolean
+ */
 function ws_pack_get_application_from_api_user_id($api_user_id) {
 	$result = false;
 	
@@ -99,6 +127,13 @@ function ws_pack_get_application_from_api_user_id($api_user_id) {
 	return $result;
 }
 
+/**
+ * Returns the API user from a give api userid
+ * 
+ * @param string $api_user_id id of the api user
+ * 
+ * @return stdClass|boolean
+ */
 function ws_pack_get_api_user_from_id($api_user_id) {
 	$result = false;
 	
@@ -117,6 +152,13 @@ function ws_pack_get_api_user_from_id($api_user_id) {
 	return $result;
 }
 
+/**
+ * Deactivate an api user
+ * 
+ * @param string $api_user_id api user id
+ * 
+ * @return boolean
+ */
 function ws_pack_deactivate_api_user_from_id($api_user_id) {
 	$result = false;
 	
@@ -133,6 +175,13 @@ function ws_pack_deactivate_api_user_from_id($api_user_id) {
 	return $result;
 }
 
+/**
+ * Activate an api user
+ * 
+ * @param string $api_user_id api user id
+ * 
+ * @return boolean
+ */
 function ws_pack_activate_api_user_from_id($api_user_id) {
 	$result = false;
 	
@@ -149,6 +198,13 @@ function ws_pack_activate_api_user_from_id($api_user_id) {
 	return $result;
 }
 
+/**
+ * Export entities to be used in webservices and adds additional data
+ * 
+ * @param array $entities entities to export
+ * 
+ * @return boolean|array
+ */
 function ws_pack_export_entities($entities) {
 	$result = false;
 	
@@ -162,7 +218,7 @@ function ws_pack_export_entities($entities) {
 				// get general export values
 				$export_values = $entity->getExportableValues();
 				
-				foreach($export_values as $field_name) {
+				foreach ($export_values as $field_name) {
 					$tmp_result[$field_name] = $entity->$field_name;
 				}
 				
@@ -195,7 +251,7 @@ function ws_pack_export_entities($entities) {
 						}
 						break;
 					case "user":
-						//get the user profiel fields
+						//get the user profile fields
 						if ($profile_fields = elgg_get_config("profile_fields")) {
 							$field_data = array();
 						
@@ -221,6 +277,13 @@ function ws_pack_export_entities($entities) {
 	return $result;
 }
 
+/**
+ * Export a single entity and add extra data
+ * 
+ * @param ElggEntity $entity entity to export
+ * 
+ * @return boolean|ElggEntity
+ */
 function ws_pack_export_entity(ElggEntity $entity) {
 	$result = false;
 	
@@ -236,6 +299,13 @@ function ws_pack_export_entity(ElggEntity $entity) {
 	return $result;
 }
 
+/**
+ * Export river items
+ * 
+ * @param array $items river items to export
+ * 
+ * @return boolean|array
+ */
 function ws_pack_export_river_items($items) {
 	elgg_load_library("simple_html_dom");
 	
@@ -251,7 +321,7 @@ function ws_pack_export_river_items($items) {
 				// default export values
 				$export_values = array("id", "subject_guid", "object_guid", "annotation_id", "type", "subtype", "action_type", "posted");
 				
-				foreach($export_values as $field_name) {
+				foreach ($export_values as $field_name) {
 					$tmp_result[$field_name] = $item->$field_name;
 				}
 				
@@ -267,9 +337,9 @@ function ws_pack_export_river_items($items) {
 				$tmp_result["html_view"] = elgg_view_river_item($item);
 				
 				// parse the html to get some usefull information
-				if($res = str_get_html($tmp_result["html_view"])) {
+				if ($res = str_get_html($tmp_result["html_view"])) {
 					// get the river summary
-					if($summary_element = $res->find("div.elgg-river-summary")) {
+					if ($summary_element = $res->find("div.elgg-river-summary")) {
 						$summary_element = $summary_element[0];
 						
 						$text = $summary_element->innertext();
@@ -279,14 +349,14 @@ function ws_pack_export_river_items($items) {
 					}
 					
 					// get the river message (optional)
-					if($message_element = $res->find("div.elgg-river-message")) {
+					if ($message_element = $res->find("div.elgg-river-message")) {
 						$message_element = $message_element[0];
 						
 						$tmp_result["message"] = trim(elgg_strip_tags($message_element->innertext()));
 					}
 					
 					// get river attachments (optional)
-					if($attachment_element = $res->find("div.elgg-river-attachments")) {
+					if ($attachment_element = $res->find("div.elgg-river-attachments")) {
 						$attachment_element = $attachment_element[0];
 						$tmp_result["attachments"] = array();
 						
@@ -294,7 +364,7 @@ function ws_pack_export_river_items($items) {
 						if ($images = $attachment_element->find("img")) {
 							$image_urls = array();
 						
-							foreach($images as $img) {
+							foreach ($images as $img) {
 								$image_urls[] = $img->src;
 							}
 						
@@ -305,7 +375,7 @@ function ws_pack_export_river_items($items) {
 						if ($links = $attachment_element->find("a")) {
 							$link_urls = array();
 						
-							foreach($links as $link) {
+							foreach ($links as $link) {
 								$link_urls[] = $link->href;
 							}
 						
@@ -330,10 +400,24 @@ function ws_pack_export_river_items($items) {
 	return $result;
 }
 
+/**
+ * Converts rows to guids
+ * 
+ * @param stdClass $row database row
+ * 
+ * @return int
+ */
 function ws_pack_row_to_guid($row) {
 	return (int) $row->guid;
 }
 
+/**
+ * Sets the global current API application
+ * 
+ * @param APIApplication $application application to set
+ * 
+ * @return boolean
+ */
 function ws_pack_set_current_api_application(APIApplication $application) {
 	global $ws_pack_current_api_application;
 	$result = false;
@@ -346,16 +430,29 @@ function ws_pack_set_current_api_application(APIApplication $application) {
 	return $result;
 }
 
+/**
+ * Returns the global API Application
+ * 
+ * @return APIApplication
+ */
 function ws_pack_get_current_api_application() {
 	global $ws_pack_current_api_application;
 	
 	return $ws_pack_current_api_application;
 }
 
+/**
+ * Returns application specific user settings
+ * 
+ * @param ElggUser       $user            user entity
+ * @param APIApplication $api_application application entity
+ * 
+ * @return boolean|APIApplicationUserSetting
+ */
 function ws_pack_get_application_user_settings(ElggUser $user, APIApplication $api_application) {
 	$result = false;
 	
-	if(!empty($user) && !empty($api_application)) {
+	if (!empty($user) && !empty($api_application)) {
 		if (elgg_instanceof($user, "user") && elgg_instanceof($api_application, "object", APIApplication::SUBTYPE)) {
 			$options = array(
 				"type" => "object",
@@ -382,6 +479,13 @@ function ws_pack_get_application_user_settings(ElggUser $user, APIApplication $a
 	return $result;
 }
 
+/**
+ * Modify a given URL to be a single sign on URL
+ * 
+ * @param string $url url to be transformed
+ * 
+ * @return string
+ */
 function ws_pack_create_sso_url($url) {
 	$result = $url;
 	
@@ -421,17 +525,24 @@ function ws_pack_create_sso_url($url) {
 	return $result;
 }
 
+/**
+ * Generates a Single Sign On secret for a give user
+ *  
+ * @param ElggUser $user user to generate the secret for
+ * 
+ * @return boolean|string
+ */
 function ws_pack_generate_sso_secret(ElggUser $user) {
 	static $running_cache;
 	
 	$result = false;
 	
 	if (!empty($user) && elgg_instanceof($user, "user", null, "ElggUser")) {
-		if(!isset($running_cache)) {
+		if (!isset($running_cache)) {
 			$running_cache = array();
 		}
 		
-		if(!isset($running_cache[$user->getGUID()])) {
+		if (!isset($running_cache[$user->getGUID()])) {
 			$running_cache[$user->getGUID()] = md5($user->getGUID() . get_site_secret() . $user->salt);
 		}
 		
@@ -441,13 +552,21 @@ function ws_pack_generate_sso_secret(ElggUser $user) {
 	return $result;
 }
 
+/**
+ * Validate a Single Sign On secret for a given user
+ * 
+ * @param string $user_guid guid of the user to check
+ * @param string $secret    secret code to validate
+ * 
+ * @return boolean
+ */
 function ws_pack_validate_sso_secret($user_guid, $secret) {
 	$result = false;
 	
 	if (!empty($user_guid) && !empty($secret)) {
 		if ($user = get_user($user_guid)) {
 			if ($correct_secret = ws_pack_generate_sso_secret($user)) {
-				if($correct_secret === $secret) {
+				if ($correct_secret === $secret) {
 					$result = true;
 				}
 			}
@@ -457,6 +576,11 @@ function ws_pack_validate_sso_secret($user_guid, $secret) {
 	return $result;
 }
 
+/**
+ * Shutdown function to reset the counter on the pushnotification service
+ * 
+ * @return void
+ */
 function ws_pack_shutdown_user_counter() {
 	
 	if ($user = elgg_get_logged_in_user_entity()) {

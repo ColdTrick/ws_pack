@@ -49,9 +49,9 @@ if ($full_view) {
 	
 	if ($annotations = $entity->getPushNotificationServices(true)) {
 		foreach ($annotations as $annotation) {
-			if($value = $annotation->value) {
-				if($value = json_decode($value, true)) {
-					foreach($value as $service_name => $settings) {
+			if ($value = $annotation->value) {
+				if ($value = json_decode($value, true)) {
+					foreach ($value as $service_name => $settings) {
 						if (!empty($settings)) {
 							$body_links[] = elgg_view("output/url", array("text" => ucfirst($service_name), "href" => "#ws-pack-push-services-" . $annotation->id, "rel" => "toggle"));
 							

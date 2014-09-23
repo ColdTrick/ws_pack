@@ -1,7 +1,14 @@
 <?php
-
+/**
+ * Users webservices for ws_pack
+ */
 ws_pack_users_expose_functions();
 
+/**
+ * Exposes the users functions
+ *
+ * @return void
+ */
 function ws_pack_users_expose_functions() {
 	expose_function(
 		"users.get_logged_in_user", 
@@ -48,6 +55,11 @@ function ws_pack_users_expose_functions() {
 	);
 }
 
+/**
+ * Returns the logged in user entity
+ * 
+ * @return SuccessResult|ErrorResult
+ */
 function ws_pack_users_get_logged_in_user() {
 	$result = false;
 	
@@ -64,6 +76,14 @@ function ws_pack_users_get_logged_in_user() {
 	return $result;
 }
 
+/**
+ * Registers the current user to a given push notification service
+ * 
+ * @param string $service_name name of the service
+ * @param array  $settings     settings related to the user
+ * 
+ * @return SuccessResult|ErrorResult
+ */
 function ws_pack_users_register_for_push_notifications($service_name, $settings) {
 	$result = false;
 	
@@ -89,13 +109,20 @@ function ws_pack_users_register_for_push_notifications($service_name, $settings)
 		}
 	}
 	
-	if($result === false) {
+	if ($result === false) {
 		$result = new ErrorResult(elgg_echo("ws_pack:users:register_for_push_notifications:error"));
 	}
 	
 	return $result;
 }
 
+/**
+ * Unregisters the current user from a given push notification service
+ * 
+ * @param string $service_name name of the service
+ * 
+ * @return SuccessResult|ErrorResult
+ */
 function ws_pack_users_unregister_from_push_notifications($service_name) {
 	$result = false;
 	
@@ -121,7 +148,7 @@ function ws_pack_users_unregister_from_push_notifications($service_name) {
 		}
 	}
 	
-	if($result === false) {
+	if ($result === false) {
 		$result = new ErrorResult(elgg_echo("ws_pack:users:unregister_from_push_notifications:error"));
 	}
 	

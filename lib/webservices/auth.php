@@ -1,8 +1,15 @@
 <?php
-
+/**
+ * Authentication webservices for ws_pack
+ */
 ws_pack_auth_expose_functions();
 
-function ws_pack_auth_expose_functions(){
+/**
+ * Exposes the authentication functions
+ * 
+ * @return void
+ */
+function ws_pack_auth_expose_functions() {
 	expose_function(
 		"auth.get_api_keys",
 		"ws_pack_auth_get_api_keys",
@@ -55,23 +62,23 @@ function ws_pack_auth_expose_functions(){
 }
 
 /**
- * Get API keys for your application,
+ * Get API keys for your application
  *
- * @param string $application_id => a unique id for your application
- * @param string $title => the title/name of your application
- * @param string $description => an optional description of your application
- * @param string $icon_url => an optional URL to the icon for your application
- * @param array $application_info => more information in a key => value array
+ * @param string $application_id   a unique id for your application
+ * @param string $title            the title/name of your application
+ * @param string $description      an optional description of your application
+ * @param string $icon_url         an optional URL to the icon for your application
+ * @param array  $application_info more information in a key => value array
  *
- * @return request status || API keys
+ * @return SuccessResult|ErrorResult
  */
-function ws_pack_auth_get_api_keys($application_id, $title, $description = "", $icon_url = "", $application_info = array()){
+function ws_pack_auth_get_api_keys($application_id, $title, $description = "", $icon_url = "", $application_info = array()) {
 	$result = false;
 	$application = false;
 	
-	if($application = ws_pack_get_application_from_id($application_id)) {
+	if ($application = ws_pack_get_application_from_id($application_id)) {
 		// we found an application, check the status
-	} elseif($application = ws_pack_create_application($application_id, $title, $description, $icon_url, $application_info)) {
+	} elseif ($application = ws_pack_create_application($application_id, $title, $description, $icon_url, $application_info)) {
 		// an application was created, check the status
 		if ($application === -1) {
 			// no application was created, because this has been disabled
@@ -113,10 +120,12 @@ function ws_pack_auth_get_api_keys($application_id, $title, $description = "", $
 /**
  * Allow login by username/email and password
  *
- * @param string $username
- * @param string $password
+ * @param string $username username
+ * @param string $password password
+ * 
  * @throws SecurityException
- * @return Ambigous <boolean, string>
+ * 
+ * @return void|string
  */
 function ws_pack_auth_gettoken($username, $password) {
 	// check if username is an email address

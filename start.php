@@ -11,7 +11,11 @@ elgg_register_event_handler("plugins_boot", "system", "ws_pack_plugins_boot");
 elgg_register_event_handler("init", "system", "ws_pack_init");
 elgg_register_event_handler("pagesetup", "system", "ws_pack_pagesetup");
 
-
+/**
+ * Validate a given SSO secret as soon as possible
+ * 
+ * @return void
+ */
 function ws_pack_plugins_boot() {
 	// check for sso login
 	if (!elgg_is_logged_in()) {
@@ -32,8 +36,9 @@ function ws_pack_plugins_boot() {
 /**
  * Initialize Elgg, prepare some libraries
  *
+ * @return void
  */
-function ws_pack_init(){
+function ws_pack_init() {
 	
 	// register libraries
 	elgg_register_library("ws_pack.auth", dirname(__FILE__) . "/lib/webservices/auth.php");
@@ -72,6 +77,11 @@ function ws_pack_init(){
 	register_shutdown_function("ws_pack_shutdown_user_counter");
 }
 
+/**
+ * Perform actions during page setup
+ * 
+ * @return void
+ */
 function ws_pack_pagesetup() {
 	elgg_register_admin_menu_item('administer', 'ws_pack', 'administer_utilities');
 }
