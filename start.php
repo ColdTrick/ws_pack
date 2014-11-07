@@ -41,6 +41,7 @@ function ws_pack_init(){
 	elgg_register_library("ws_pack.groups", dirname(__FILE__) . "/lib/webservices/groups.php");
 	elgg_register_library("ws_pack.users", dirname(__FILE__) . "/lib/webservices/users.php");
 	elgg_register_library("ws_pack.system", dirname(__FILE__) . "/lib/webservices/system.php");
+	elgg_register_library("ws_pack.search", dirname(__FILE__) . "/lib/webservices/search.php");
 	
 	elgg_register_library("simple_html_dom", dirname(__FILE__) . "/vendors/simplehtmldom/simple_html_dom.php");
 	
