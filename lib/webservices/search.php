@@ -10,6 +10,14 @@
 				"query" => array(
 					"type" => "string",
 					"required" => true
+				),
+				"offset" => array(
+					"type" => "integer",
+					"required" => false
+				),
+				"limit" => array(
+					"type" => "integer",
+					"required" => false
 				)
 			),
 			elgg_echo("ws_pack:api:system:api:register_push_notification_service"),
@@ -19,14 +27,18 @@
 		);
 	}
 
-	function ws_pack_search($query) {
+	function ws_pack_search($query, $offset = 0, $limit = 20) {
+		
+		if (!elgg_is_logged_in()) {
+			elgg_set_ignore_access(true);
+		}
 
 		$return_results = array();
 
 		$current_params = array(
 			'query' => $query,
-			'offset' => 0,
-			'limit' => 20,
+			'offset' => $offset,
+			'limit' => $limit,
 		);
 
 		$current_params['search_type'] = 'entities';		
@@ -74,6 +86,10 @@
 			if (is_array($results['entities']) && $results['count']) {
 				$return_results = array_merge($return_results, $results['entities']);
 			}
+		}
+
+		if (!elgg_is_logged_in()) {
+			elgg_set_ignore_access(false);
 
 			$access_ids = array(ACCESS_PUBLIC, ACCESS_LOGGED_IN);
 			if ($site = elgg_get_site_entity()) {
@@ -87,6 +103,7 @@
 					unset($return_results[$key]);
 				}
 			}
+
 		}
 		
 		$result = array();
