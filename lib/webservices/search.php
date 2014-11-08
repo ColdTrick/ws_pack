@@ -89,8 +89,6 @@
 		}
 
 		if (!elgg_is_logged_in()) {
-			elgg_set_ignore_access(false);
-
 			$access_ids = array(ACCESS_PUBLIC, ACCESS_LOGGED_IN);
 			if ($site = elgg_get_site_entity()) {
 				if ($subsite_acl = $site->getPrivateSetting("subsite_acl")) {
@@ -112,6 +110,10 @@
 			$result['results'] = ws_pack_export_entities($return_results);
 		} else {
 			$result['results'] = array();
+		}
+
+		if (!elgg_is_logged_in()) {
+			elgg_set_ignore_access(false);
 		}
 
 		return $result;
