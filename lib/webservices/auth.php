@@ -9,7 +9,7 @@ ws_pack_auth_expose_functions();
  * 
  * @return void
  */
-function ws_pack_auth_expose_functions(){
+function ws_pack_auth_expose_functions() {
 	expose_function(
 		"auth.get_api_keys",
 		"ws_pack_auth_get_api_keys",
@@ -72,13 +72,13 @@ function ws_pack_auth_expose_functions(){
  *
  * @return SuccessResult|ErrorResult
  */
-function ws_pack_auth_get_api_keys($application_id, $title, $description = "", $icon_url = "", $application_info = array()){
+function ws_pack_auth_get_api_keys($application_id, $title, $description = "", $icon_url = "", $application_info = array()) {
 	$result = false;
 	$application = false;
 	
-	if($application = ws_pack_get_application_from_id($application_id)) {
+	if ($application = ws_pack_get_application_from_id($application_id)) {
 		// we found an application, check the status
-	} elseif($application = ws_pack_create_application($application_id, $title, $description, $icon_url, $application_info)) {
+	} elseif ($application = ws_pack_create_application($application_id, $title, $description, $icon_url, $application_info)) {
 		// an application was created, check the status
 		if ($application === -1) {
 			// no application was created, because this has been disabled

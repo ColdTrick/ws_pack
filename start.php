@@ -38,7 +38,7 @@ function ws_pack_plugins_boot() {
  *
  * @return void
  */
-function ws_pack_init(){
+function ws_pack_init() {
 	
 	// register libraries
 	elgg_register_library("ws_pack.auth", dirname(__FILE__) . "/lib/webservices/auth.php");

@@ -68,12 +68,12 @@ $image_url = elgg_get_site_url() . "mod/ws_pack/views/default/plugins/ws_pack/im
 $image_url = elgg_format_url($image_url);
 
 echo "<center>";
-	echo "<div style=\"background-image:url('".$image_url."');background-size:contain; width:200px; height:435px;\">";
-		echo "<span id='color1test' style='margin-top: 148px;padding: 5px 55px;position: relative;top: 50px; background:".$plugin->color_1."'>Color 1</span>";
+echo "<div style=\"background-image:url('" . $image_url . "');background-size:contain; width:200px; height:435px;\">";
+echo "<span id='color1test' style='margin-top: 148px;padding: 5px 55px;position: relative;top: 50px; background:" . $plugin->color_1 . "'>Color 1</span>";
 		
-		echo "<br>";
-		echo "<span id='color2test' style='margin-top: 148px; color:#FFF; padding: 5px 55px 285px;position: relative;top: 57px; height:300px; background:".$plugin->color_2.";'>Color 2</span>";
+echo "<br>";
+echo "<span id='color2test' style='margin-top: 148px; color:#FFF; padding: 5px 55px 285px;position: relative;top: 57px; height:300px; background:" . $plugin->color_2 . ";'>Color 2</span>";
 		
-	echo "</div>";
+echo "</div>";
 echo "</center>";
 	
