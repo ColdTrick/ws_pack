@@ -5,7 +5,7 @@
 if (elgg_is_active_plugin("groups")) {
 	ws_pack_groups_expose_functions();
 }
-
+	
 /**
  * Exposes the groups functions
  *
@@ -39,7 +39,7 @@ function ws_pack_groups_expose_functions() {
 		false
 	);
 	*/
-	
+		
 	// get groups user_guid is a member of
 	expose_function(
 		"groups.member_of",
@@ -67,7 +67,7 @@ function ws_pack_groups_expose_functions() {
 		true
 	);
 }
-
+	
 /**
  * Returns group entities for a given filter
  * 

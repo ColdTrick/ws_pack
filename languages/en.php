@@ -21,18 +21,18 @@ Active: These applications are allowed to use the API.
 Pending: These applications have requested access to the API, you need to approve or reject this request.
 Inactive: These applications have been (temporaraly) disabled.
 Disabled: These applications have been denied access to the API.",
-		
-// plugin settings
-'ws_pack:settings:allow_application_registration' => "Allow new applications to register for API usage",
-
-// user settings
-'ws_pack:usersettings:none' => "No webservices were found",
-'ws_pack:usersettings:push_notification_services' => "Push notification services",
-'ws_pack:annotation:push_notification_service:delete_confirm' => "Are you sure you wish to delete this Push Notification Service, you will no longer get push notifications on you mobile device",
-'ws_pack:annotation:push_notification_service:settings' => "Show settings",
 	
-// api
-'ws_pack:api:application:status:pending' => "The application is pending approval",
+	// plugin settings
+	'ws_pack:settings:allow_application_registration' => "Allow new applications to register for API usage",
+
+	// user settings
+	'ws_pack:usersettings:none' => "No webservices were found",
+	'ws_pack:usersettings:push_notification_services' => "Push notification services",
+	'ws_pack:annotation:push_notification_service:delete_confirm' => "Are you sure you wish to delete this Push Notification Service, you will no longer get push notifications on you mobile device",
+	'ws_pack:annotation:push_notification_service:settings' => "Show settings",
+		
+	// api
+	'ws_pack:api:application:status:pending' => "The application is pending approval",
 	'ws_pack:api:application:status:disabled' => "The application is disabled",
 	'ws_pack:api:application:status:inactive' => "The application is temporaraly disabled",
 	
@@ -72,6 +72,8 @@ Disabled: These applications have been denied access to the API.",
 	'ws_pack:system:api:unregister_push_notification_service:error' => "An unknown error occurred while unregistering the push notification service",
 	
 	// actions
+	'ws_pack:error:notfound' => "Error connecting to the web service",
+	
 	'ws_pack:action:application:activate:success' => "The application %s has been activated",
 	'ws_pack:action:application:activate:error' => "An unknown error occured while activating %s",
 	
@@ -88,5 +90,4 @@ Disabled: These applications have been denied access to the API.",
 	'ws_pack:action:push_service:delete_user:error:can_edit' => "You're not allowed to edit these settings",
 	'ws_pack:action:push_service:delete_user:error:delete' => "An unknown error occured while deleting the Push Notification settings",
 	'ws_pack:action:push_service:delete_user:success' => "The Push Notification settings have successfully been removed",
-
 );

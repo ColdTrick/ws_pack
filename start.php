@@ -38,7 +38,7 @@ function ws_pack_plugins_boot() {
  *
  * @return void
  */
-function ws_pack_init() {
+function ws_pack_init(){
 	
 	// register libraries
 	elgg_register_library("ws_pack.auth", dirname(__FILE__) . "/lib/webservices/auth.php");
@@ -46,6 +46,15 @@ function ws_pack_init() {
 	elgg_register_library("ws_pack.groups", dirname(__FILE__) . "/lib/webservices/groups.php");
 	elgg_register_library("ws_pack.users", dirname(__FILE__) . "/lib/webservices/users.php");
 	elgg_register_library("ws_pack.system", dirname(__FILE__) . "/lib/webservices/system.php");
+	elgg_register_library("ws_pack.thewire", dirname(__FILE__) . "/lib/webservices/thewire.php");
+	elgg_register_library("ws_pack.settings", dirname(__FILE__) . "/lib/webservices/settings.php");
+	elgg_register_library("ws_pack.members", dirname(__FILE__) . "/lib/webservices/members.php");
+	elgg_register_library("ws_pack.languages", dirname(__FILE__) . "/lib/webservices/languages.php");
+	elgg_register_library("ws_pack.messages", dirname(__FILE__) . "/lib/webservices/messages.php");
+	elgg_register_library("ws_pack.entities", dirname(__FILE__) . "/lib/webservices/entities.php");
+	elgg_register_library("ws_pack.discussions", dirname(__FILE__) . "/lib/webservices/discussions.php");
+	elgg_register_library("ws_pack.notifications", dirname(__FILE__) . "/lib/webservices/notifications.php");
+	elgg_register_library("ws_pack.community", dirname(__FILE__) . "/lib/webservices/community.php");
 	
 	elgg_register_library("simple_html_dom", dirname(__FILE__) . "/vendors/simplehtmldom/simple_html_dom.php");
 	

@@ -109,7 +109,7 @@ function ws_pack_users_register_for_push_notifications($service_name, $settings)
 		}
 	}
 	
-	if ($result === false) {
+	if($result === false) {
 		$result = new ErrorResult(elgg_echo("ws_pack:users:register_for_push_notifications:error"));
 	}
 	
@@ -148,7 +148,7 @@ function ws_pack_users_unregister_from_push_notifications($service_name) {
 		}
 	}
 	
-	if ($result === false) {
+	if($result === false) {
 		$result = new ErrorResult(elgg_echo("ws_pack:users:unregister_from_push_notifications:error"));
 	}
 	

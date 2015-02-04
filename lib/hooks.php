@@ -13,7 +13,7 @@
  *
  * @return array
  */
-function ws_pack_applications_menu_hook_handler($hook, $type, $returnvalue, $params) {
+function ws_pack_applications_menu_hook_handler($hook, $type, $returnvalue, $params){
 	$result = $returnvalue;
 	
 	if (elgg_in_context("admin")) {
@@ -60,7 +60,7 @@ function ws_pack_applications_menu_hook_handler($hook, $type, $returnvalue, $par
  *
  * @return array
  */
-function ws_pack_entity_menu_hook_handler($hook, $type, $returnvalue, $params) {
+function ws_pack_entity_menu_hook_handler($hook, $type, $returnvalue, $params){
 	$result = $returnvalue;
 	
 	if (($entity = elgg_extract("entity", $params)) && elgg_instanceof($entity, "object", APIApplication::SUBTYPE)) {
@@ -185,9 +185,9 @@ function ws_pack_entity_menu_hook_handler($hook, $type, $returnvalue, $params) {
  * @param string $type        type of the hook
  * @param string $returnvalue current return value
  * @param array  $params      hook parameters
- *
+*
  * @return void
- */
+*/
 function ws_pack_rest_init_hook_handler($hook, $type, $returnvalue, $params) {
 	
 	// get the called method
@@ -200,6 +200,8 @@ function ws_pack_rest_init_hook_handler($hook, $type, $returnvalue, $params) {
 		elgg_load_library("ws_pack.river");
 		elgg_load_library("ws_pack.users");
 		elgg_load_library("ws_pack.system");
+		elgg_load_library("ws_pack.settings");
+		elgg_load_library("ws_pack.languages");
 	} else {
 		list($library, $dummy) = explode(".", $method);
 	
@@ -251,11 +253,11 @@ function ws_pack_api_key_use_hook_handler($hook, $type, $returnvalue, $params) {
 function ws_pack_container_write_hook_handler($hook, $type, $returnvalue, $params) {
 	$result = $returnvalue;
 
-	if (!empty($params) && is_array($params)) {
+	if(!empty($params) && is_array($params)) {
 		$subtype = elgg_extract("subtype", $params);
 		$container = elgg_extract("container", $params);
 			
-		if (($subtype == APIApplicationUserSetting::SUBTYPE) && elgg_instanceof($container, "object", APIApplication::SUBTYPE)) {
+		if(($subtype == APIApplicationUserSetting::SUBTYPE) && elgg_instanceof($container, "object", APIApplication::SUBTYPE)) {
 			$result = true;
 		}
 	}
@@ -303,3 +305,4 @@ function ws_pack_annotation_menu_hook_handler($hook, $type, $returnvalue, $param
 	
 	return $result;
 }
+	
