@@ -18,10 +18,6 @@ function ws_pack_thewire_expose_functions() {
 				"type" => "string",
 				"required" => true 
 			),
-			"guid_user" => array (
-				"type" => "int",
-				"required" => true 
-			),
 			"parent" => array (
 				"type" => "int",
 				"required" => false 
@@ -37,13 +33,9 @@ function ws_pack_thewire_expose_functions() {
 		"thewire.get_wires", 
 		"ws_pack_get_wires", 
 		array (
-			"user_guid" => array (
+			"friends_only" => array (
 				"type" => "int",
-				"required" => false 
-			),
-			"relationship" => array (
-				"type" => "string",
-				"required" => false 
+				"required" => true 
 			) 
 		), 
 		'', 
@@ -56,10 +48,6 @@ function ws_pack_thewire_expose_functions() {
 		"thewire.get_thread", 
 		"ws_pack_get_thread", 
 		array (
-			"user_guid" => array (
-				"type" => "int",
-				"required" => true 
-			),
 			"thread_id" => array (
 				"type" => "string",
 				"required" => false 
@@ -75,15 +63,11 @@ function ws_pack_thewire_expose_functions() {
 		"thewire.delete_wire", 
 		"ws_pack_delete_wire", 
 		array (
-			"user_guid" => array (
-				"type" => "int",
-				"required" => true 
-			),
 			"guid" => array (
 				"type" => "int",
 				"required" => true 
 			) 
-		), 
+		),
 		'', 
 		'POST', 
 		true, 
@@ -91,7 +75,15 @@ function ws_pack_thewire_expose_functions() {
 	);
 }
 
-function my_post_to_wire($text, $guid_user, $parent) {
+/**
+ * Post a Wire
+ * 
+ * @param string $text   Content of the wire
+ * @param int    $parent Parent GUID
+ *
+ * @return SuccessResult|ErrorResult
+ */
+function my_post_to_wire($text, $parent) {
 	$result = false;
 
 	$user = elgg_get_logged_in_user_entity();
@@ -102,10 +94,8 @@ function my_post_to_wire($text, $guid_user, $parent) {
 		$text = substr($text, 0, 140);
 
 		// returns guid of wire post
-		$post_wire = thewire_save_post($text, $guid_user, 2, $parent);
-		if ($post_wire === false) {
-			// error
-		} else {
+		$post_wire = thewire_save_post($text, $user->guid, 2, $parent);
+		if ($post_wire !== false) {
 			$result = new SuccessResult($post_wire);
 		}
 		
@@ -117,24 +107,39 @@ function my_post_to_wire($text, $guid_user, $parent) {
 	}
 }
 
-function ws_pack_get_wires($guid_user, $relationship = false) {
+/**
+ * Get Wires
+ * 
+ * @param bool $friends_only only show friends (default false)
+ *
+ * @return SuccessResult|ErrorResult
+ */
+function ws_pack_get_wires($friends_only = false) {
 	$result = false;
 
 	$user = elgg_get_logged_in_user_entity();
 	$api_application = ws_pack_get_current_api_application();
 	
 	if (!empty($user) && !empty($api_application)) {
-		$wires = elgg_get_entities(array(
+
+		$options = array(
 			'type' => 'object',
 			'subtype' => 'thewire',
-			'limit' => 50,
-		));
+			'limit' => 50
+		);
+
+		if ($friends_only) {
+			$options["relationship"] = "friend";
+			$options["relationship_guid"] = $user->guid;
+			$options["relationship_join_on"] = 'owner_guid';
+		}
+
+		$wires = elgg_get_entities_from_relationship($options);
 		
 		// returns guid of wire post
 		if ($wires === false) {
-			// error
+			$result = new ErrorResult(elgg_echo("ws_pack:error:notfound"));
 		} else {
-			
 			$wires["entities"] = ws_pack_export_entities($wires);
 			$guids = array();
 			
@@ -149,42 +154,11 @@ function ws_pack_get_wires($guid_user, $relationship = false) {
 					$owner = get_entity($wire["owner_guid"]);
 					$wire["owner"] = ws_pack_export_entity($owner);
 					$wire["thread_id"] = $wire_entity->wire_thread;
-					/* Add threads to the wires
-					$threads = elgg_get_entities_from_metadata(array(
-						"metadata_name" => "wire_thread",
-						"metadata_value" => $wire_guid,
-						"type" => "object",
-						"subtype" => "thewire",
-						"limit" => 20,
-					));
-					
-					$wire["thread"] = ws_pack_export_entities($threads);
-					
-					$guids_thread = array();
-					
-					foreach ($wire["thread"] as $k => $wt) {
-						
-						$wire_guid_th = $wt["guid"];
-						
-						if(!in_array($wire_guid_th,$guids_thread))	{
-							
-							$guids_thread[] = $wire_guid_th;
-							$owner_thread = get_entity($wt["owner_guid"]);
-							$wt["owner"] = ws_pack_export_entity($owner_thread);
-							$wire["thread"][$k] = $wt;
-						}
-						else {
-							unset($wire["thread"][$k]);
-						}
-					}
-					*/
-					
 					$wires["entities"][$key] = $wire;
 				} else {
 					unset($wires["entities"][$key]);
 				}
 			}
-				
 			$result = new SuccessResult($wires);
 		}
 	
@@ -196,7 +170,14 @@ function ws_pack_get_wires($guid_user, $relationship = false) {
 	return $result;
 }
 
-function ws_pack_get_thread($guid_user, $thread_id = false) {
+/**
+ * Get Thread
+ * 
+ * @param int $thread_id Thread GUID 
+ *
+ * @return SuccessResult|ErrorResult
+ */
+function ws_pack_get_thread($thread_id = false) {
 	$result = false;
 
 	$user = elgg_get_logged_in_user_entity();
@@ -241,19 +222,25 @@ function ws_pack_get_thread($guid_user, $thread_id = false) {
 					unset($wires["entities"][$k]);
 				}
 			}
-			
 			$result = new SuccessResult($wires);
 		}
 	
 		if ($result === false) {
-			$result = new ErrorResult(elgg_echo("ws_pack:users:register_for_push_notifications:error"));
+			$result = new ErrorResult(elgg_echo("ws_pack:error:notfound"));
 		}
 	}
 	
 	return $result;
 }
 
-function ws_pack_delete_wire($guid_user, $guid) {
+/**
+ * Delete Wire
+ * 
+ * @param int $guid Wire GUID 
+ *
+ * @return SuccessResult|ErrorResult
+ */
+function ws_pack_delete_wire($guid) {
 	$result = false;
 
 	$user = elgg_get_logged_in_user_entity();

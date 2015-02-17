@@ -68,7 +68,6 @@ function ws_pack_get_lang_file() {
 		}
 
 		$translations = json_encode($translations);
-
 		$result = new SuccessResult($translations);	    
 	}
 	

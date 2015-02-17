@@ -13,20 +13,20 @@ function ws_pack_notifications_expose_functions() {
 	expose_function(
 		"notifications.get_notifications", 
 		"ws_pack_get_notifications", 
-		array (
-			"user_guid" => array (
-				"type" => "int",
-				"required" => false 
-			) 
-		), 
+		array (), 
 		'', 
 		'GET', 
 		true, 
 		true
 	);
 }
-	
-function ws_pack_get_notifications($user_guid) {
+
+/**
+ * Get Notifications
+ *
+ * @return SuccessResult|ErrorResult
+ */
+function ws_pack_get_notifications() {
 	$result = false;
 
 	$user = elgg_get_logged_in_user_entity();
@@ -43,7 +43,7 @@ function ws_pack_get_notifications($user_guid) {
 			'subtype' => 'site_notification',
 			'limit' => 50,
 			'order_by' => 'e.last_action desc',
-			'owner_guid' => $user_guid,
+			'owner_guid' => $user->guid,
 			'full_view' => false,
 			'relationship' => 'hasActor',
 			'no_results' => elgg_echo('site_notifications:empty'),
@@ -51,9 +51,8 @@ function ws_pack_get_notifications($user_guid) {
 		
 		$notifications = elgg_get_entities_from_metadata($options);
 		
-		// returns guid of wire post
 		if ($notifications === false) {
-			// error
+			$result = new ErrorResult(elgg_echo("ws_pack:error:notfound"));
 		} else {
 			
 			$notifications["entities"] = ws_pack_export_entities($notifications);
@@ -71,7 +70,6 @@ function ws_pack_get_notifications($user_guid) {
 					$owner = get_entity($notification["owner_guid"]);
 					$notification["owner"] = ws_pack_export_entity($owner);
 					$notification["parent_guid"] = $notification_entity->getURL();
-					//$notification["parent_guid"] = $notification["parent_guid"];
 					
 					$notifications["entities"][$key] = $notification;
 				} else {

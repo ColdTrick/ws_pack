@@ -26,6 +26,13 @@ function ws_pack_entities_expose_functions() {
 	);
 }
 
+/**
+ * Get Entity
+ * 
+ * @param int $id Entity GUID
+ *
+ * @return SuccessResult|ErrorResult
+ */
 function ws_pack_get_entity($id) {
 	$result = false;
 

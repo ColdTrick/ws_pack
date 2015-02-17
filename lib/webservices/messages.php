@@ -25,10 +25,6 @@ function ws_pack_messages_expose_functions() {
 			"recipient" => array (
 				"type" => "int",
 				"required" => true 
-			),
-			"sender" => array (
-				"type" => "int",
-				"required" => true 
 			) 
 		), 
 		'', 
@@ -40,12 +36,7 @@ function ws_pack_messages_expose_functions() {
 	expose_function(
 		"messages.get_messages", 
 		"ws_pack_get_messages",
-		array (
-			"guid_user" => array (
-				"type" => "int",
-				"required" => true 
-			) 
-		), 
+		array (), 
 		'', 
 		'GET', 
 		true, 
@@ -94,15 +85,11 @@ function ws_pack_messages_expose_functions() {
 		"messages.delete_message", 
 		"ws_pack_delete_message", 
 		array (
-			"user_guid" => array (
-				"type" => "int",
-				"required" => true 
-			),
 			"guid" => array (
 				"type" => "int",
 				"required" => true 
 			) 
-		), 
+		),
 		'', 
 		'POST', 
 		true, 
@@ -110,6 +97,16 @@ function ws_pack_messages_expose_functions() {
 	);
 }
 
+/**
+ * Post a discussion
+ * 
+ * @param string $subject   Subject of the message
+ * @param string $message   Content of message
+ * @param int    $recipient Recipient GUID
+ * @param string $sender    User GUID
+ *
+ * @return SuccessResult|ErrorResult
+ */
 function ws_pack_send_message($subject, $message, $recipient, $sender) {
 	$result = false;
 
@@ -117,14 +114,11 @@ function ws_pack_send_message($subject, $message, $recipient, $sender) {
 	$api_application = ws_pack_get_current_api_application();
 	
 	if (!empty($user) && !empty($api_application)) {
-		$send_message = messages_send($subject, $message, $recipient, $sender);
-		if ($send_message === false) {
-			// error
-		} else {
+		$send_message = messages_send($subject, $message, $recipient, $user->guid);
+		if ($send_message !== false) {
 			$result = new SuccessResult($send_message);
 		}
 	}
-	
 	if ($result === false) {
 		$result = new ErrorResult(elgg_echo("ws_pack:error:notfound"));
 	}
@@ -132,30 +126,43 @@ function ws_pack_send_message($subject, $message, $recipient, $sender) {
 	return $result;
 }
 
-function ws_pack_get_messages($guid_user) {
+/**
+ * Get Messages
+ *
+ * @return SuccessResult|ErrorResult
+ */
+function ws_pack_get_messages() {
 	$result = false;
 
 	$user = elgg_get_logged_in_user_entity();
 	$api_application = ws_pack_get_current_api_application();
 	
 	if (!empty($user) && !empty($api_application)) {
-		
-		$messages = messages_get_unread($guid_user);
-		if ($messages === false) {
-			// error
-		} else {
+		$messages = messages_get_unread($user->guid);
+		if ($messages !== false) {
 			$messages["entities"] = ws_pack_export_entities($messages);
 			$result = new SuccessResult($messages);
 		}
 	}
-	
 	if ($result === false) {
 		$result = new ErrorResult(elgg_echo("ws_pack:error:notfound"));
 	}
 	
 	return $result;
 }
-	
+
+/**
+ * Get Conversation
+ * 
+ * @param int $user_guid    User GUID
+ * @param int $fromto_guid  From User GUID 
+ * @param int $relationship Relationship
+ * @param int $limit        Limit of Conversations
+ * @param int $offset       Offset
+ * @param int $count        Count
+ *
+ * @return SuccessResult|ErrorResult
+ */
 function ws_pack_get_conversation($user_guid, $fromto_guid, $relationship, $limit = 100, $offset = 0, $count = false) {
 	$result = false;
 
@@ -207,11 +214,8 @@ function ws_pack_get_conversation($user_guid, $fromto_guid, $relationship, $limi
 		
 		$messages = elgg_get_entities_from_metadata($options);
 
-		if ($messages === false) {
-			// error
-		} else {
+		if ($messages !== false) {
 			$messages["entities"] = ws_pack_export_entities($messages);
-			
 			$result = new SuccessResult($messages);
 		}
 	}
@@ -223,6 +227,16 @@ function ws_pack_get_conversation($user_guid, $fromto_guid, $relationship, $limi
 	return $result;
 }
 
+/**
+ * Get Last Conversation
+ * 
+ * @param int $user_guid    User GUID
+ * @param int $limit        Limit of Conversations
+ * @param int $offset       Offset
+ * @param int $count        Count
+ *
+ * @return SuccessResult|ErrorResult
+ */
 function ws_pack_get_last_conversations($user_guid, $limit = 100, $offset = 0, $count = false) {
 	$result = false;
 
@@ -270,7 +284,7 @@ function ws_pack_get_last_conversations($user_guid, $limit = 100, $offset = 0, $
 		$messages = elgg_get_entities_from_metadata($options);
 
 		if ($messages === false) {
-			// error
+			$result = new ErrorResult(elgg_echo("ws_pack:error:notfound"));
 		} else {
 
 			$messages["entities"] = ws_pack_export_entities($messages);
@@ -296,7 +310,6 @@ function ws_pack_get_last_conversations($user_guid, $limit = 100, $offset = 0, $
 					unset($messages["entities"][$key]);
 				}
 			}
-
 			$result = new SuccessResult($messages);
 		}
 	}
@@ -307,8 +320,15 @@ function ws_pack_get_last_conversations($user_guid, $limit = 100, $offset = 0, $
 	
 	return $result;
 }
-	
-function ws_pack_delete_message($guid_user, $guid) {
+
+/**
+ * Delete Message
+ * 
+ * @param int $guid    Message GUID
+ *
+ * @return SuccessResult|ErrorResult
+ */
+function ws_pack_delete_message($guid) {
 	$result = false;
 
 	$user = elgg_get_logged_in_user_entity();

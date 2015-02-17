@@ -51,6 +51,11 @@ function ws_pack_members_expose_functions() {
 	);
 }
 
+/**
+ * Get Friends
+ * 
+ * @return SuccessResult|ErrorResult
+ */
 function ws_pack_get_friends() {
 	$result = false;
 
@@ -58,20 +63,14 @@ function ws_pack_get_friends() {
 	$api_application = ws_pack_get_current_api_application();
 	
 	if (!empty($user) && !empty($api_application)) {
-		$params = array();
-		$params["relationship"] = "friend";
-		$params["friends"] = true;
-		$params["type"] = "user";
 
-		$search_results = elgg_get_entities_from_relationship($params);
-		if ($search_results === false) {
-			// error
-		} else {
+		$search_results = $user->getFriends(array("limit" => false));
+
+		if ($search_results !== false) {
 			$search_results["entities"] = ws_pack_export_entities($search_results);
 			$result = new SuccessResult($search_results);
 		}
 	}
-	
 	if ($result === false) {
 		$result = new ErrorResult(elgg_echo("ws_pack:error:notfound"));
 	}
@@ -79,6 +78,13 @@ function ws_pack_get_friends() {
 	return $result;
 }
 
+/**
+ * Serch members
+ * 
+ * @param string $search_str String to find
+ *
+ * @return SuccessResult|ErrorResult
+ */
 function ws_pack_search_members($search_str) {
 	$result = false;
 
@@ -106,6 +112,13 @@ function ws_pack_search_members($search_str) {
 	return $result;
 }
 
+/**
+ * Serch members
+ * 
+ * @param int $guid Member GUID
+ *
+ * @return SuccessResult|ErrorResult
+ */
 function ws_pack_get_member($guid) {
 	$result = false;
 
@@ -115,9 +128,7 @@ function ws_pack_get_member($guid) {
 	if (!empty($user) && !empty($api_application)) {
 		
 		$member_result = get_entity($guid);
-		if ($member_result === false) {
-			// error
-		} else {
+		if ($member_result !== false) {
 			$member_result = ws_pack_export_entity($member_result);
 			$result = new SuccessResult($member_result);
 		}
