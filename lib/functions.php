@@ -490,13 +490,14 @@ function ws_pack_create_sso_url($url) {
 	$result = $url;
 	
 	if ($user = elgg_get_logged_in_user_entity()) {
-		if ($secret = ws_pack_generate_sso_secret($user)) {
+		$timestamp = time();
+		if ($secret = ws_pack_generate_sso_secret($user, $timestamp)) {
 			$url_parts = parse_url($url);
 			
 			if (isset($url_parts["query"])) {
-				$url_parts["query"] .= "&u=" . $user->getGUID() . "&s=" . $secret;
+				$url_parts["query"] .= "&u=" . $user->getGUID() . "&s=" . $secret . "&t=" . $timestamp;
 			} else {
-				$url_parts["query"] = "u=" . $user->getGUID() . "&s=" . $secret;
+				$url_parts["query"] = "u=" . $user->getGUID() . "&s=" . $secret . "&t=" . $timestamp;
 			}
 			
 			if (is_callable("http_build_url")) {
@@ -528,11 +529,12 @@ function ws_pack_create_sso_url($url) {
 /**
  * Generates a Single Sign On secret for a give user
  *  
- * @param ElggUser $user user to generate the secret for
+ * @param ElggUser $user      user to generate the secret for
+ * @param int      $timestamp timestamp to limit the durability of the secret
  * 
  * @return boolean|string
  */
-function ws_pack_generate_sso_secret(ElggUser $user) {
+function ws_pack_generate_sso_secret(ElggUser $user, $timestamp) {
 	static $running_cache;
 	
 	$result = false;
@@ -543,7 +545,7 @@ function ws_pack_generate_sso_secret(ElggUser $user) {
 		}
 		
 		if (!isset($running_cache[$user->getGUID()])) {
-			$running_cache[$user->getGUID()] = md5($user->getGUID() . get_site_secret() . $user->salt);
+			$running_cache[$user->getGUID()] = md5($user->getGUID() . get_site_secret() . $user->salt . $timestamp);
 		}
 		
 		$result = $running_cache[$user->getGUID()];
@@ -560,20 +562,39 @@ function ws_pack_generate_sso_secret(ElggUser $user) {
  * 
  * @return boolean
  */
-function ws_pack_validate_sso_secret($user_guid, $secret) {
-	$result = false;
+function ws_pack_validate_sso_secret($user_guid, $secret, $timestamp) {
+	global $CONFIG;
 	
-	if (!empty($user_guid) && !empty($secret)) {
-		if ($user = get_user($user_guid)) {
-			if ($correct_secret = ws_pack_generate_sso_secret($user)) {
-				if ($correct_secret === $secret) {
-					$result = true;
-				}
-			}
-		}
+	if (empty($user_guid) || empty($secret) || empty($timestamp)) {
+		return false;
 	}
 	
-	return $result;
+	// check user
+	$user = get_user($user_guid);
+	if (!$user) {
+		return false;
+	}
+	
+	// validate timestamp
+	// keeping this in line with the remember me cookie lifetime
+	$timestamp = sanitize_int($timestamp);
+	$expiration_timestamp = $CONFIG->cookies['remember_me']['expire'];
+	if ($timestamp < $expiration_timestamp) {
+		return false;
+	}
+	
+	// generate secret
+	$correct_secret = ws_pack_generate_sso_secret($user, $timestamp);
+	if (!$correct_secret) {
+		return false;
+	}
+	
+	// validate provided secret
+	if ($correct_secret === $secret) {
+		return true;
+	}
+	
+	return false;
 }
 
 /**
@@ -597,4 +618,46 @@ function ws_pack_shutdown_user_counter() {
 			}
 		}
 	}
+}
+
+/**
+ * Strips secret stuff from current url and forwards
+ * 
+ * @return void
+ */
+function ws_pack_forward_without_secret() {
+	$url_parts = parse_url(current_page_url());
+		
+	parse_str($url_parts["query"], $query);
+	unset($query['u']);
+	unset($query['s']);
+	unset($query['t']);
+	$url_parts["query"] = http_build_query($query);	
+
+	if (empty($url_parts['query'])) {
+		unset($url_parts['query']);
+	}
+	
+	if (is_callable("http_build_url")) {
+		$href = http_build_url($url_parts);
+	} else {
+		$href = "";
+		if (isset($url_parts["scheme"])) {
+			$href .= $url_parts["scheme"] . "://";
+		}
+		if (isset($url_parts["host"])) {
+			$href .= $url_parts["host"];
+		}
+		if (isset($url_parts["path"])) {
+			$href .= $url_parts["path"];
+		}
+		if (isset($url_parts["query"])) {
+			$href .= "?" . $url_parts["query"];
+		}
+		if (isset($url_parts["fragment"])) {
+			$href .= "#" . $url_parts["fragment"];
+		}
+	}
+	
+	forward($href);
 }

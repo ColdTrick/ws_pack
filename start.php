@@ -17,11 +17,15 @@ elgg_register_event_handler("pagesetup", "system", "ws_pack_pagesetup");
  * @return void
  */
 function ws_pack_plugins_boot() {
-	// check for sso login
-	if (!elgg_is_logged_in()) {
-		if (($user_guid = get_input("u", false)) && ($sso_secret = get_input("s", false))) {
-			if (ws_pack_validate_sso_secret($user_guid, $sso_secret)) {
-				// valid user, login
+	// check for sso login data
+	$user_guid = get_input("u", false);
+	$sso_secret = get_input("s", false);
+	$timestamp = get_input("t", false);
+	
+	if ($user_guid && $sso_secret && $timestamp) {
+		if (ws_pack_validate_sso_secret($user_guid, $sso_secret, $timestamp)) {
+			// valid user, login
+			if (!elgg_is_logged_in()) {
 				try {
 					$user = get_user($user_guid);
 					login($user);
@@ -29,6 +33,8 @@ function ws_pack_plugins_boot() {
 					// something went wrong, continue
 				}
 			}
+						
+			ws_pack_forward_without_secret();
 		}
 	}
 }
