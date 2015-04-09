@@ -61,6 +61,7 @@ function ws_pack_init() {
 	elgg_register_library("ws_pack.discussions", dirname(__FILE__) . "/lib/webservices/discussions.php");
 	elgg_register_library("ws_pack.notifications", dirname(__FILE__) . "/lib/webservices/notifications.php");
 	elgg_register_library("ws_pack.community", dirname(__FILE__) . "/lib/webservices/community.php");
+	elgg_register_library("ws_pack.search", dirname(__FILE__) . "/lib/webservices/search.php");
 	
 	elgg_register_library("simple_html_dom", dirname(__FILE__) . "/vendors/simplehtmldom/simple_html_dom.php");
 	
