@@ -16,7 +16,9 @@ function ws_pack_created_river_event_handler($event, $type, $river_item) {
 	
 	if (!empty($river_item) && ($river_item instanceof ElggRiverItem)) {
 		
-		elgg_load_library("simple_html_dom");
+		if (!function_exists('str_get_html')) {
+			elgg_load_library("simple_html_dom");
+		}
 		
 		$message = "";
 		$html_view = elgg_view_river_item($river_item);
