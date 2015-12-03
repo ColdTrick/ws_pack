@@ -1,6 +1,6 @@
 <?php
 
-return array(
+$english = array(
 	// general
 	'item:object:ws_pack_application' => "Webservice application",
 	'item:object:ws_pack_application_user_setting' => "Webservice application user settings",
@@ -90,3 +90,5 @@ Disabled: These applications have been denied access to the API.",
 	'ws_pack:action:push_service:delete_user:success' => "The Push Notification settings have successfully been removed",
 
 );
+
+add_translation('en', $english);
