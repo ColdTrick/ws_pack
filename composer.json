@@ -1,0 +1,17 @@
+{
+	"name": "coldtrick/ws_pack",
+	"description": "Adds different webservices functions to the Elgg (REST) API",
+	"type": "elgg-plugin",
+	"keywords": ["elgg", "plugin", "rest", "api"],
+	"license": "GPL-2.0",
+	"support": {
+		"source": "https://github.com/ColdTrick/ws_pack",
+		"issues": "https://github.com/ColdTrick/ws_pack/issues"
+	},
+	"require": {
+		"composer/installers": "^1.0.8"
+	},
+	"require-dev": {
+		"coldtrick/sniffs": "dev-master"
+	}
+}
