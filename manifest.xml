@@ -11,9 +11,14 @@
 	<copyright>(C) ColdTrick IT Solutions 2013 - 2016</copyright>
 	<license>GNU General Public License version 2</license>
  	
- 	<requires>
+	<requires>
 		<type>elgg_release</type>
 		<version>1.9</version>
+	</requires>
+
+	<requires>
+		<type>plugin</type>
+		<name>web_services</name>
 	</requires>
 	
 	<category>ColdTrick</category>
