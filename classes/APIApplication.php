@@ -39,7 +39,7 @@ class APIApplication extends ElggObject {
 	 *
 	 * @see ElggEntity::disable()
 	 */
-	function disable($reason = '', $recursive = true) {
+	public function disable($reason = '', $recursive = true) {
 		if (isset($this->api_user_id)) {
 			ws_pack_deactivate_api_user_from_id($this->api_user_id);
 	
@@ -58,7 +58,7 @@ class APIApplication extends ElggObject {
 	 *
 	 * @see ElggEntity::enable()
 	 */
-	function enable($recursive = true) {
+	public function enable($recursive = true) {
 		$result = parent::enable($recursive);
 		
 		if (isset($this->api_user_id)) {
@@ -77,7 +77,7 @@ class APIApplication extends ElggObject {
 	 *
 	 * @see ElggEntity::getIconURL()
 	 */
-	function getIconURL($size = 'medium') {
+	public function getIconURL($size = 'medium') {
 		if (isset($this->icon_url)) {
 			return $this->icon_url;
 		} else {
@@ -94,7 +94,7 @@ class APIApplication extends ElggObject {
 	 *
 	 * @see ElggEntity::delete()
 	 */
-	function delete($recursive = true) {
+	public function delete($recursive = true) {
 		
 		if ($keys = $this->getApiKeys()) {
 			remove_api_user($this->site_guid, $keys['api_key']);
@@ -108,7 +108,7 @@ class APIApplication extends ElggObject {
 	 *
 	 * @return string
 	 */
-	function getTitle() {
+	public function getTitle() {
 		return $this->title;
 	}
 	
@@ -117,7 +117,7 @@ class APIApplication extends ElggObject {
 	 *
 	 * @return string
 	 */
-	function getDescription() {
+	public function getDescription() {
 		return $this->description;
 	}
 	
@@ -126,7 +126,7 @@ class APIApplication extends ElggObject {
 	 *
 	 * @return SuccessResult|ErrorResult
 	 */
-	function getStatusCode() {
+	public function getStatusCode() {
 		// is this entity enabled
 		if ($this->isEnabled()) {
 			// does it have a connected API user
@@ -155,7 +155,7 @@ class APIApplication extends ElggObject {
 	 *
 	 * @return boolean
 	 */
-	function activate() {
+	public function activate() {
 		$result = false;
 		
 		// make sure this entity is enabled
@@ -184,7 +184,7 @@ class APIApplication extends ElggObject {
 	 *
 	 * @return boolean
 	 */
-	function deactivate() {
+	public function deactivate() {
 		if (isset($this->api_user_id)) {
 			$result = ws_pack_deactivate_api_user_from_id($this->api_user_id);
 		} else {
@@ -199,7 +199,7 @@ class APIApplication extends ElggObject {
 	 *
 	 * @return array|boolean
 	 */
-	function getApiKeys() {
+	public function getApiKeys() {
 		$result = false;
 		
 		if ($this->isEnabled() && isset($this->api_user_id)) {
@@ -226,7 +226,7 @@ class APIApplication extends ElggObject {
 	 *
 	 * @return boolean
 	 */
-	function registerPushNotificationService($service_name, $settings) {
+	public function registerPushNotificationService($service_name, $settings) {
 		$result = false;
 		
 		if (!empty($service_name) && !empty($settings)) {
@@ -259,7 +259,7 @@ class APIApplication extends ElggObject {
 	 *
 	 * @return array|boolean
 	 */
-	function getPushNotificationService($service_name) {
+	public function getPushNotificationService($service_name) {
 		$result = false;
 		
 		if (!empty($service_name)) {
@@ -287,7 +287,7 @@ class APIApplication extends ElggObject {
 	 *
 	 * @return array|boolean
 	 */
-	function getPushNotificationServices($get_annotations = false) {
+	public function getPushNotificationServices($get_annotations = false) {
 		$result = false;
 		
 		if ($services = $this->getAnnotations('push_notification_service', false)) {
@@ -323,7 +323,7 @@ class APIApplication extends ElggObject {
 	 *
 	 * @return boolean
 	 */
-	function unregisterPushNotificationService($service_name) {
+	public function unregisterPushNotificationService($service_name) {
 		$result = false;
 		
 		if (!empty($service_name)) {
@@ -352,7 +352,7 @@ class APIApplication extends ElggObject {
 	 *
 	 * @return void
 	 */
-	function sendPushNotification($message, $potential_user_guids) {
+	public function sendPushNotification($message, $potential_user_guids) {
 		
 		if (!empty($message) && !empty($potential_user_guids)) {
 			if (!is_array($potential_user_guids)) {
