@@ -6,16 +6,16 @@
  */
 class APIApplication extends ElggObject {
 	
-	const SUBTYPE = "ws_pack_application";
+	const SUBTYPE = 'ws_pack_application';
 	const STATE_PENDING = -100;
 	
 	protected $api_user;
 	
 	/**
 	 * overrule / extend some parent functions
-	 * 
+	 *
 	 * @return void
-	 * 
+	 *
 	 * @see ElggObject::initializeAttributes()
 	 */
 	protected function initializeAttributes() {
@@ -23,23 +23,23 @@ class APIApplication extends ElggObject {
 		
 		$site = elgg_get_site_entity();
 	
-		$this->attributes["subtype"] = self::SUBTYPE;
-		$this->attributes["access_id"] = ACCESS_PUBLIC;
-		$this->attributes["owner_guid"] = $site->getGUID();
-		$this->attributes["container_guid"] = $site->getGUID();
+		$this->attributes['subtype'] = self::SUBTYPE;
+		$this->attributes['access_id'] = ACCESS_PUBLIC;
+		$this->attributes['owner_guid'] = $site->getGUID();
+		$this->attributes['container_guid'] = $site->getGUID();
 	}
 	
 	/**
 	 * Also deactivate the api_user when disabling the API application
-	 * 
+	 *
 	 * @param string  $reason    reason for disabling
 	 * @param boolean $recursive set to true to disable recursively
-	 * 
+	 *
 	 * @return boolean
-	 * 
+	 *
 	 * @see ElggEntity::disable()
 	 */
-	function disable($reason = "", $recursive = true) {
+	function disable($reason = '', $recursive = true) {
 		if (isset($this->api_user_id)) {
 			ws_pack_deactivate_api_user_from_id($this->api_user_id);
 	
@@ -52,30 +52,32 @@ class APIApplication extends ElggObject {
 	/**
 	 * Also activate the api_user when enabling the API application
 	 *
+	 * @param bool $recursive Recursively enable all entities disabled with the entity?
+	 *
 	 * @return boolean
 	 *
 	 * @see ElggEntity::enable()
 	 */
-	function enable() {
-		$result = parent::enable();
-			
+	function enable($recursive = true) {
+		$result = parent::enable($recursive);
+		
 		if (isset($this->api_user_id)) {
 			ws_pack_activate_api_user_from_id($this->api_user_id);
 		}
-			
+		
 		return $result;
 	}
 	
 	/**
 	 * Returns icon url for the application
-	 * 
+	 *
 	 * @param string $size icon size
-	 * 
+	 *
 	 * @return string
-	 * 
+	 *
 	 * @see ElggEntity::getIconURL()
 	 */
-	function getIconURL($size = "medium") {
+	function getIconURL($size = 'medium') {
 		if (isset($this->icon_url)) {
 			return $this->icon_url;
 		} else {
@@ -85,17 +87,17 @@ class APIApplication extends ElggObject {
 	
 	/**
 	 * Also remove API user when deleting the object
-	 * 
+	 *
 	 * @param boolean $recursive if the delete should be recursive
-	 * 
+	 *
 	 * @return boolean
-	 * 
+	 *
 	 * @see ElggEntity::delete()
 	 */
 	function delete($recursive = true) {
 		
 		if ($keys = $this->getApiKeys()) {
-			remove_api_user($this->site_guid, $keys["api_key"]);
+			remove_api_user($this->site_guid, $keys['api_key']);
 		}
 		
 		return parent::delete($recursive);
@@ -103,7 +105,7 @@ class APIApplication extends ElggObject {
 	
 	/**
 	 * Returns the title of the application
-	 * 
+	 *
 	 * @return string
 	 */
 	function getTitle() {
@@ -207,8 +209,8 @@ class APIApplication extends ElggObject {
 			
 			if ($this->api_user->active) {
 				$result = array(
-					"api_key" => $this->api_user->api_key,
-					"secret" => $this->api_user->secret
+					'api_key' => $this->api_user->api_key,
+					'secret' => $this->api_user->secret
 				);
 			}
 		}
@@ -218,7 +220,7 @@ class APIApplication extends ElggObject {
 	
 	/**
 	 * Registers a push notification service to the API application
-	 * 
+	 *
 	 * @param string $service_name name of the service
 	 * @param array  $settings     additional settings to be save with the notification service
 	 *
@@ -233,14 +235,14 @@ class APIApplication extends ElggObject {
 			}
 			
 			switch ($service_name) {
-				case "appcelerator":
+				case 'appcelerator':
 					if ($this->getPushNotificationService($service_name)) {
 						// already registered
 						$result = true;
 					} else {
 						$value = array($service_name => $settings);
 						
-						$result = $this->annotate("push_notification_service", json_encode($value), ACCESS_PUBLIC);
+						$result = $this->annotate('push_notification_service', json_encode($value), ACCESS_PUBLIC);
 					}
 					break;
 			}
@@ -252,16 +254,16 @@ class APIApplication extends ElggObject {
 	
 	/**
 	 * Returns a notification service settings
-	 * 
+	 *
 	 * @param string $service_name service name
-	 * 
+	 *
 	 * @return array|boolean
 	 */
 	function getPushNotificationService($service_name) {
 		$result = false;
 		
 		if (!empty($service_name)) {
-			if ($services = $this->getAnnotations("push_notification_service", false)) {
+			if ($services = $this->getAnnotations('push_notification_service', false)) {
 				foreach ($services as $service) {
 					if ($value = $service->value) {
 						if ($value = json_decode($value, true)) {
@@ -280,15 +282,15 @@ class APIApplication extends ElggObject {
 	
 	/**
 	 * Returns all push notifcation services
-	 * 
+	 *
 	 * @param boolean $get_annotations set to true to return the annotations instead of an array with settings
-	 * 
+	 *
 	 * @return array|boolean
 	 */
 	function getPushNotificationServices($get_annotations = false) {
 		$result = false;
 		
-		if ($services = $this->getAnnotations("push_notification_service", false)) {
+		if ($services = $this->getAnnotations('push_notification_service', false)) {
 			
 			if (empty($get_annotations)) {
 				$tmp_result = array();
@@ -316,16 +318,16 @@ class APIApplication extends ElggObject {
 	
 	/**
 	 * Unregister a push notification service
-	 * 
+	 *
 	 * @param string $service_name name of the service
-	 * 
+	 *
 	 * @return boolean
 	 */
 	function unregisterPushNotificationService($service_name) {
 		$result = false;
 		
 		if (!empty($service_name)) {
-			if ($services = $this->getAnnotations("push_notification_service", false)) {
+			if ($services = $this->getAnnotations('push_notification_service', false)) {
 				foreach ($services as $service) {
 					if ($value = $service->value) {
 						if ($value = json_decode($value, true)) {
@@ -344,10 +346,10 @@ class APIApplication extends ElggObject {
 	
 	/**
 	 * Send a push notification
-	 * 
+	 *
 	 * @param string $message              text of the message
 	 * @param array  $potential_user_guids potential user guids
-	 * 
+	 *
 	 * @return void
 	 */
 	function sendPushNotification($message, $potential_user_guids) {
@@ -360,29 +362,29 @@ class APIApplication extends ElggObject {
 			if ($push_services = $this->getPushNotificationServices()) {
 				
 				foreach ($push_services as $service_name => $settings) {
-					$classname = "WsPack" . ucfirst($service_name);
+					$classname = 'WsPack' . ucfirst($service_name);
 					
 					if (class_exists($classname)) {
 						$notify_options = array(
-							"type" => "object",
-							"subtype" => APIApplicationUserSetting::SUBTYPE,
-							"limit" => false,
-							"owner_guids" => $potential_user_guids,
-							"container_guid" => $this->getGUID(),
-							"annotation_name" => $service_name
+							'type' => 'object',
+							'subtype' => APIApplicationUserSetting::SUBTYPE,
+							'limit' => false,
+							'owner_guids' => $potential_user_guids,
+							'container_guid' => $this->getGUID(),
+							'annotation_name' => $service_name
 						);
 						
 						if ($annotations = elgg_get_annotations($notify_options)) {
 							
 							switch ($service_name) {
-								case "appcelerator":
+								case 'appcelerator':
 									$channels = array();
 									
 									foreach ($annotations as $annotation) {
 										if ($data = json_decode($annotation->value, true)) {
-											$channel = elgg_extract("channel", $data);
-											$user_id = elgg_extract("user_id", $data);
-											$count = (int) elgg_extract("count", $data, 0);
+											$channel = elgg_extract('channel', $data);
+											$user_id = elgg_extract('user_id', $data);
+											$count = (int) elgg_extract('count', $data, 0);
 											
 											if (!empty($channel) && !empty($user_id)) {
 												// increase count by one
@@ -401,7 +403,7 @@ class APIApplication extends ElggObject {
 												$channels[$channel][$count][] = $user_id;
 												
 												// save an update
-												$data["count"] = $count;
+												$data['count'] = $count;
 												$annotation->value = json_encode($data);
 												$annotation->save();
 											}
