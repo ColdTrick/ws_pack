@@ -10,8 +10,8 @@ ws_pack_system_expose_functions();
  * @return void
  */
 function ws_pack_system_expose_functions() {
-	expose_function(
-		"system.api.register_push_notification_service", 
+	elgg_ws_expose_function(
+		"system.api.register_push_notification_service",
 		"ws_pack_system_api_register_push_notification_service",
 		array(
 			"service_name" => array(
@@ -29,8 +29,8 @@ function ws_pack_system_expose_functions() {
 		false
 	);
 	
-	expose_function(
-		"system.api.unregister_push_notification_service", 
+	elgg_ws_expose_function(
+		"system.api.unregister_push_notification_service",
 		"ws_pack_system_api_unregister_push_notification_service",
 		array(
 			"service_name" => array(
@@ -48,10 +48,10 @@ function ws_pack_system_expose_functions() {
 
 /**
  * Register a push notification service to the current api application
- * 
+ *
  * @param string $service_name name of the notification service
  * @param array  $settings     settings for this service
- * 
+ *
  * @return ErrorResult|SuccessResult
  */
 function ws_pack_system_api_register_push_notification_service($service_name, $settings) {
@@ -80,9 +80,9 @@ function ws_pack_system_api_register_push_notification_service($service_name, $s
 
 /**
  * Unregister a push notifications from the current api application
- * 
+ *
  * @param string $service_name name of the service
- * 
+ *
  * @return ErrorResult|SuccessResult
  */
 function ws_pack_system_api_unregister_push_notification_service($service_name) {

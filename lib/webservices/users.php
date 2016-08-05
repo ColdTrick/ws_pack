@@ -10,8 +10,8 @@ ws_pack_users_expose_functions();
  * @return void
  */
 function ws_pack_users_expose_functions() {
-	expose_function(
-		"users.get_logged_in_user", 
+	elgg_ws_expose_function(
+		"users.get_logged_in_user",
 		"ws_pack_users_get_logged_in_user",
 		array(),
 		elgg_echo("ws_pack:api:users:get_logged_in_user"),
@@ -20,8 +20,8 @@ function ws_pack_users_expose_functions() {
 		true
 	);
 	
-	expose_function(
-		"users.register_for_push_notifications", 
+	elgg_ws_expose_function(
+		"users.register_for_push_notifications",
 		"ws_pack_users_register_for_push_notifications",
 		array(
 			"service_name" => array(
@@ -39,8 +39,8 @@ function ws_pack_users_expose_functions() {
 		true
 	);
 	
-	expose_function(
-		"users.unregister_from_push_notifications", 
+	elgg_ws_expose_function(
+		"users.unregister_from_push_notifications",
 		"ws_pack_users_unregister_from_push_notifications",
 		array(
 			"service_name" => array(
@@ -57,7 +57,7 @@ function ws_pack_users_expose_functions() {
 
 /**
  * Returns the logged in user entity
- * 
+ *
  * @return SuccessResult|ErrorResult
  */
 function ws_pack_users_get_logged_in_user() {
@@ -78,10 +78,10 @@ function ws_pack_users_get_logged_in_user() {
 
 /**
  * Registers the current user to a given push notification service
- * 
+ *
  * @param string $service_name name of the service
  * @param array  $settings     settings related to the user
- * 
+ *
  * @return SuccessResult|ErrorResult
  */
 function ws_pack_users_register_for_push_notifications($service_name, $settings) {
@@ -118,9 +118,9 @@ function ws_pack_users_register_for_push_notifications($service_name, $settings)
 
 /**
  * Unregisters the current user from a given push notification service
- * 
+ *
  * @param string $service_name name of the service
- * 
+ *
  * @return SuccessResult|ErrorResult
  */
 function ws_pack_users_unregister_from_push_notifications($service_name) {

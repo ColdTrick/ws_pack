@@ -10,25 +10,25 @@ ws_pack_entities_expose_functions();
  * @return void
  */
 function ws_pack_entities_expose_functions() {
-	expose_function(
-		"entities.get_entity", 
-		"ws_pack_get_entity", 
+	elgg_ws_expose_function(
+		"entities.get_entity",
+		"ws_pack_get_entity",
 		array (
 			"id" => array (
 				"type" => "int",
-				"required" => true 
-			) 
-		), 
-		'', 
-		'GET', 
-		true, 
+				"required" => true
+			)
+		),
+		'',
+		'GET',
+		true,
 		true
 	);
 }
 
 /**
  * Get Entity
- * 
+ *
  * @param int $id Entity GUID
  *
  * @return SuccessResult|ErrorResult

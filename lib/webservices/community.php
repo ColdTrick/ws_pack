@@ -10,7 +10,7 @@ ws_pack_community_expose_functions();
  * @return void
  */
 function ws_pack_community_expose_functions() {
-	expose_function(
+	elgg_ws_expose_function(
 		"community.get_plugins",
 		"ws_pack_get_plugins",
 		array(),
@@ -20,7 +20,7 @@ function ws_pack_community_expose_functions() {
 		true
 	);
 
-	expose_function(
+	elgg_ws_expose_function(
 		"community.get_color_scheme",
 		"ws_pack_get_color_scheme",
 		array(),
@@ -33,7 +33,7 @@ function ws_pack_community_expose_functions() {
 
 /**
  * Returns the plugins
- * 
+ *
  * @return SuccessResult|ErrorResult
  */
 function ws_pack_get_plugins() {
@@ -49,9 +49,9 @@ function ws_pack_get_plugins() {
 		$active = array();
 		foreach ($check_active as $ca) {
 			if (elgg_is_active_plugin($ca)) {
-				$active[$ca] = "enabled";	
+				$active[$ca] = "enabled";
 			} else {
-				$active[$ca] = "disabled";	
+				$active[$ca] = "disabled";
 			}
 		}
 		
@@ -71,7 +71,7 @@ function ws_pack_get_plugins() {
 
 /**
  * Returns the colorscheme
- * 
+ *
  * @return SuccessResult|ErrorResult
  */
 function ws_pack_get_color_scheme() {

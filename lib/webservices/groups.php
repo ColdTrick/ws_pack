@@ -14,7 +14,7 @@ if (elgg_is_active_plugin("groups")) {
 function ws_pack_groups_expose_functions() {
 	// get (all) groups
 	/*
-	expose_function(
+	elgg_ws_expose_function(
 		"groups.get",
 		"ws_pack_groups_get",
 		array(
@@ -41,7 +41,7 @@ function ws_pack_groups_expose_functions() {
 	*/
 		
 	// get groups user_guid is a member of
-	expose_function(
+	elgg_ws_expose_function(
 		"groups.member_of",
 		"ws_pack_groups_member_of",
 		array(
@@ -70,11 +70,11 @@ function ws_pack_groups_expose_functions() {
 	
 /**
  * Returns group entities for a given filter
- * 
+ *
  * @param string $filter name of the filter
  * @param int    $offset offset
  * @param int    $limit  limit
- * 
+ *
  * @return ErrorResult|array
  */
 function ws_pack_groups_get($filter, $offset = 0, $limit = 10) {
@@ -104,11 +104,11 @@ function ws_pack_groups_get($filter, $offset = 0, $limit = 10) {
 
 /**
  * Returns the groups a user is member of
- * 
+ *
  * @param int $user_guid user guid
  * @param int $offset    offset
  * @param int $limit     limit
- * 
+ *
  * @return array|ErrorResult
  */
 function ws_pack_groups_member_of($user_guid = 0, $offset = 0, $limit = 10) {

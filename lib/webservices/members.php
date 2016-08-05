@@ -10,50 +10,50 @@ ws_pack_members_expose_functions();
  * @return void
  */
 function ws_pack_members_expose_functions() {
-	expose_function(
+	elgg_ws_expose_function(
 		"members.get_friends",
 		"ws_pack_get_friends",
-		array(), 
-		'', 
-		'GET', 
-		true, 
+		array(),
+		'',
+		'GET',
+		true,
 		true
 	);
 	
-	expose_function(
-		"members.search_members", 
-		"ws_pack_search_members", 
+	elgg_ws_expose_function(
+		"members.search_members",
+		"ws_pack_search_members",
 		array(
 			"search_str" => array(
 				"type" => "string",
-				"required" => true 
-			) 
-		), 
-		'', 
-		'GET', 
-		true, 
+				"required" => true
+			)
+		),
+		'',
+		'GET',
+		true,
 		true
 	);
 	
-	expose_function(
-		"members.get_member", 
-		"ws_pack_get_member", 
+	elgg_ws_expose_function(
+		"members.get_member",
+		"ws_pack_get_member",
 		array(
 			"guid" => array (
 				"type" => "string",
-				"required" => true 
-			) 
-		), 
-		'', 
-		'GET', 
-		true, 
+				"required" => true
+			)
+		),
+		'',
+		'GET',
+		true,
 		true
 	);
 }
 
 /**
  * Get Friends
- * 
+ *
  * @return SuccessResult|ErrorResult
  */
 function ws_pack_get_friends() {
@@ -80,7 +80,7 @@ function ws_pack_get_friends() {
 
 /**
  * Serch members
- * 
+ *
  * @param string $search_str String to find
  *
  * @return SuccessResult|ErrorResult
@@ -114,7 +114,7 @@ function ws_pack_search_members($search_str) {
 
 /**
  * Serch members
- * 
+ *
  * @param int $guid Member GUID
  *
  * @return SuccessResult|ErrorResult

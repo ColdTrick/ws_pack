@@ -10,74 +10,74 @@ ws_pack_thewire_expose_functions();
  * @return void
  */
 function ws_pack_thewire_expose_functions() {
-	expose_function(
-		"thewire.post", 
-		"my_post_to_wire", 
+	elgg_ws_expose_function(
+		"thewire.post",
+		"my_post_to_wire",
 		array (
 			"text" => array (
 				"type" => "string",
-				"required" => true 
+				"required" => true
 			),
 			"parent" => array (
 				"type" => "int",
-				"required" => false 
-			) 
-		), 
-		'Post to the wire. 140 characters or less', 
-		'POST', 
-		true, 
+				"required" => false
+			)
+		),
+		'Post to the wire. 140 characters or less',
+		'POST',
+		true,
 		true
 	);
 
-	expose_function(
-		"thewire.get_wires", 
-		"ws_pack_get_wires", 
+	elgg_ws_expose_function(
+		"thewire.get_wires",
+		"ws_pack_get_wires",
 		array (
 			"friends_only" => array (
 				"type" => "int",
-				"required" => true 
-			) 
-		), 
-		'', 
-		'GET', 
-		true, 
+				"required" => true
+			)
+		),
+		'',
+		'GET',
+		true,
 		true
 	);
 
-	expose_function(
-		"thewire.get_thread", 
-		"ws_pack_get_thread", 
+	elgg_ws_expose_function(
+		"thewire.get_thread",
+		"ws_pack_get_thread",
 		array (
 			"thread_id" => array (
 				"type" => "string",
-				"required" => false 
-			) 
-		), 
-		'', 
-		'GET', 
-		true, 
+				"required" => false
+			)
+		),
+		'',
+		'GET',
+		true,
 		true
 	);
 
-	expose_function(
-		"thewire.delete_wire", 
-		"ws_pack_delete_wire", 
+	elgg_ws_expose_function(
+		"thewire.delete_wire",
+		"ws_pack_delete_wire",
 		array (
 			"guid" => array (
 				"type" => "int",
-				"required" => true 
-			) 
+				"required" => true
+			)
 		),
-		'', 
-		'POST', 
-		true, 
+		'',
+		'POST',
+		true,
 		true
 	);
 }
 
 /**
  * Post a Wire
- * 
+ *
  * @param string $text   Content of the wire
  * @param int    $parent Parent GUID
  *
@@ -109,7 +109,7 @@ function my_post_to_wire($text, $parent) {
 
 /**
  * Get Wires
- * 
+ *
  * @param bool $friends_only only show friends (default false)
  *
  * @return SuccessResult|ErrorResult
@@ -172,8 +172,8 @@ function ws_pack_get_wires($friends_only = false) {
 
 /**
  * Get Thread
- * 
- * @param int $thread_id Thread GUID 
+ *
+ * @param int $thread_id Thread GUID
  *
  * @return SuccessResult|ErrorResult
  */
@@ -235,8 +235,8 @@ function ws_pack_get_thread($thread_id = false) {
 
 /**
  * Delete Wire
- * 
- * @param int $guid Wire GUID 
+ *
+ * @param int $guid Wire GUID
  *
  * @return SuccessResult|ErrorResult
  */

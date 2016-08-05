@@ -11,8 +11,8 @@ ws_pack_settings_expose_functions();
  */
 function ws_pack_settings_expose_functions() {
 	
-	expose_function(
-		"settings.get_logged_in_user", 
+	elgg_ws_expose_function(
+		"settings.get_logged_in_user",
 		"ws_pack_settings_get_logged_in_user",
 		array(),
 		elgg_echo("ws_pack:api:settings:get_logged_in_user"),
@@ -21,7 +21,7 @@ function ws_pack_settings_expose_functions() {
 		true
 	);
 
-	expose_function(
+	elgg_ws_expose_function(
 		"settings.get_settings",
 		"ws_pack_get_settings",
 		array(

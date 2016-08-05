@@ -10,10 +10,10 @@ ws_pack_discussions_expose_functions();
  * @return void
  */
 function ws_pack_discussions_expose_functions() {
-	expose_function(
+	elgg_ws_expose_function(
 		"discussions.post",
 		"post_discussion",
-		array(	
+		array(
 			"title" => array(
 				"type" => "string",
 				"required" => false
@@ -41,10 +41,10 @@ function ws_pack_discussions_expose_functions() {
 		true
 	);
 
-	expose_function(
+	elgg_ws_expose_function(
 		"discussions.post_reply",
 		"post_reply",
-		array(	
+		array(
 			"content" => array(
 				"type" => "string",
 				"required" => true
@@ -60,7 +60,7 @@ function ws_pack_discussions_expose_functions() {
 		true
 	);
 
-	expose_function(
+	elgg_ws_expose_function(
 		"discussions.get_discussions",
 		"ws_pack_get_discussions",
 		array(
@@ -75,7 +75,7 @@ function ws_pack_discussions_expose_functions() {
 		true
 	);
 
-	expose_function(
+	elgg_ws_expose_function(
 		"discussions.get_discussion",
 		"ws_pack_get_discussion",
 		array(
@@ -90,25 +90,25 @@ function ws_pack_discussions_expose_functions() {
 		true
 	);
 
-	expose_function(
+	elgg_ws_expose_function(
 		"discussions.delete_discussion",
-		"ws_pack_delete_discussion", 
+		"ws_pack_delete_discussion",
 		array(
 			"guid" => array (
 				"type" => "int",
-				"required" => true 
-			) 
-		), 
-		'', 
-		'POST', 
-		true, 
+				"required" => true
+			)
+		),
+		'',
+		'POST',
+		true,
 		true
 	);
 }
 
 /**
  * Post a discussion
- * 
+ *
  * @param string $title      Title of the discussion
  * @param string $content    Content of the discussion
  * @param int    $group_guid Group GUID
@@ -151,7 +151,7 @@ function post_discussion($title = false, $content, $group_guid, $tags = false, $
 
 /**
  * Post a reply
- * 
+ *
  * @param string $content    Content of the discussion
  * @param int    $group_guid Group GUID
  *
@@ -187,7 +187,7 @@ function post_reply($content, $parent_guid) {
 
 /**
  * Get Discussions from a group
- * 
+ *
  * @param int $group_guid   Group GUID
  *
  * @return SuccessResult|ErrorResult
@@ -243,7 +243,7 @@ function ws_pack_get_discussions($group_guid) {
 
 /**
  * Get Discussion
- * 
+ *
  * @param int $guid   Discussion GUID
  *
  * @return SuccessResult|ErrorResult
@@ -302,7 +302,7 @@ function ws_pack_get_discussion($guid) {
 
 /**
  * Delete Discussions from a group
- * 
+ *
  * @param int $guid Discussion GUID
  *
  * @return SuccessResult|ErrorResult

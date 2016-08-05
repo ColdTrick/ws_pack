@@ -10,96 +10,96 @@ ws_pack_messages_expose_functions();
  * @return void
  */
 function ws_pack_messages_expose_functions() {
-	expose_function(
-		"messages.send_message", 
-		"ws_pack_send_message", 
+	elgg_ws_expose_function(
+		"messages.send_message",
+		"ws_pack_send_message",
 		array (
 			"subject" => array (
 				"type" => "string",
-				"required" => true 
+				"required" => true
 			),
 			"message" => array (
 				"type" => "string",
-				"required" => true 
+				"required" => true
 			),
 			"recipient" => array (
 				"type" => "int",
-				"required" => true 
-			) 
-		), 
-		'', 
-		'POST', 
-		true, 
+				"required" => true
+			)
+		),
+		'',
+		'POST',
+		true,
 		true
 	);
 
-	expose_function(
-		"messages.get_messages", 
+	elgg_ws_expose_function(
+		"messages.get_messages",
 		"ws_pack_get_messages",
-		array (), 
-		'', 
-		'GET', 
-		true, 
+		array (),
+		'',
+		'GET',
+		true,
 		true
 	);
 
-	expose_function(
-		"messages.get_conversation", 
-		"ws_pack_get_conversation", 
+	elgg_ws_expose_function(
+		"messages.get_conversation",
+		"ws_pack_get_conversation",
 		array (
 			"user_guid" => array (
 				"type" => "int",
-				"required" => false 
+				"required" => false
 			),
 			"fromto_guid" => array (
 				"type" => "int",
-				"required" => false 
+				"required" => false
 			),
 			"relationship" => array (
 				"type" => "string",
-				"required" => true 
-			) 
-		), 
-		'', 
-		'GET', 
-		true, 
+				"required" => true
+			)
+		),
+		'',
+		'GET',
+		true,
 		true
 	);
 
-	expose_function(
+	elgg_ws_expose_function(
 		"messages.get_last_conversations",
-		"ws_pack_get_last_conversations", 
+		"ws_pack_get_last_conversations",
 		array (
 			"user_guid" => array (
 				"type" => "int",
-				"required" => false 
-			) 
-		), 
-		'', 
-		'GET', 
-		true, 
+				"required" => false
+			)
+		),
+		'',
+		'GET',
+		true,
 		true
 	);
 
-	expose_function(
-		"messages.delete_message", 
-		"ws_pack_delete_message", 
+	elgg_ws_expose_function(
+		"messages.delete_message",
+		"ws_pack_delete_message",
 		array (
 			"guid" => array (
 				"type" => "int",
-				"required" => true 
-			) 
+				"required" => true
+			)
 		),
-		'', 
-		'POST', 
-		true, 
+		'',
+		'POST',
+		true,
 		true
 	);
 }
 
 /**
  * Post a discussion
- * 
+ *
  * @param string $subject   Subject of the message
  * @param string $message   Content of message
  * @param int    $recipient Recipient GUID
@@ -153,9 +153,9 @@ function ws_pack_get_messages() {
 
 /**
  * Get Conversation
- * 
+ *
  * @param int $user_guid    User GUID
- * @param int $fromto_guid  From User GUID 
+ * @param int $fromto_guid  From User GUID
  * @param int $relationship Relationship
  * @param int $limit        Limit of Conversations
  * @param int $offset       Offset
@@ -229,7 +229,7 @@ function ws_pack_get_conversation($user_guid, $fromto_guid, $relationship, $limi
 
 /**
  * Get Last Conversation
- * 
+ *
  * @param int $user_guid    User GUID
  * @param int $limit        Limit of Conversations
  * @param int $offset       Offset
@@ -323,7 +323,7 @@ function ws_pack_get_last_conversations($user_guid, $limit = 100, $offset = 0, $
 
 /**
  * Delete Message
- * 
+ *
  * @param int $guid    Message GUID
  *
  * @return SuccessResult|ErrorResult

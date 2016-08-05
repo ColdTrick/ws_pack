@@ -10,13 +10,13 @@ ws_pack_notifications_expose_functions();
  * @return void
  */
 function ws_pack_notifications_expose_functions() {
-	expose_function(
-		"notifications.get_notifications", 
-		"ws_pack_get_notifications", 
-		array (), 
-		'', 
-		'GET', 
-		true, 
+	elgg_ws_expose_function(
+		"notifications.get_notifications",
+		"ws_pack_get_notifications",
+		array (),
+		'',
+		'GET',
+		true,
 		true
 	);
 }

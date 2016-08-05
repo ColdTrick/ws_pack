@@ -10,8 +10,8 @@ ws_pack_river_expose_functions();
  * @return void
  */
 function ws_pack_river_expose_functions() {
-	expose_function(
-		"river.get", 
+	elgg_ws_expose_function(
+		"river.get",
 		"ws_pack_river_get",
 		array(
 			"filter" => array(
@@ -48,13 +48,13 @@ function ws_pack_river_expose_functions() {
 
 /**
  * Returns river data
- * 
+ *
  * @param string $filter            filter name
  * @param array  $guids             guids of groups
  * @param int    $offset            offset
  * @param int    $limit             limit
  * @param int    $posted_time_lower lower time stamp to limit results
- * 
+ *
  * @return array|ErrorResult
  */
 function ws_pack_river_get($filter, $guids = array(), $offset = 0, $limit = 25, $posted_time_lower = 0) {

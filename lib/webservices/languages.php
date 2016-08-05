@@ -10,13 +10,13 @@ ws_pack_languages_expose_functions();
  * @return void
  */
 function ws_pack_languages_expose_functions() {
-	expose_function(
-		"languages.get_lang_file", 
-		"ws_pack_get_lang_file", 
+	elgg_ws_expose_function(
+		"languages.get_lang_file",
+		"ws_pack_get_lang_file",
 		array (),
-		'', 
-		'GET', 
-		true, 
+		'',
+		'GET',
+		true,
 		true
 	);
 }
@@ -47,28 +47,28 @@ function ws_pack_get_lang_file() {
 			"user",
 			"usersettings",
 			"date",
-			"email" 
+			"email"
 		);
 
 		//load and iterate the language cached by the site
 		foreach ($GLOBALS["CONFIG"]->translations as $trans) {
-			foreach ($trans as $k => $v) { 
+			foreach ($trans as $k => $v) {
 				if (strpos($k, ":")) {
 					$parts = explode(':', $k);
 					$new_key = $parts[1];
 					foreach ($fields as $field) {
 						if ($parts[0] == $field) {
-							$translations[$field][$new_key] = $v; 
+							$translations[$field][$new_key] = $v;
 						}
 					}
 				} else {
-					$translations["general"][$k] = $v; 
+					$translations["general"][$k] = $v;
 				}
 			}
 		}
 
 		$translations = json_encode($translations);
-		$result = new SuccessResult($translations);	    
+		$result = new SuccessResult($translations);
 	}
 	
 	if ($result === false) {

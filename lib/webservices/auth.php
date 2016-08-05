@@ -6,11 +6,11 @@ ws_pack_auth_expose_functions();
 
 /**
  * Exposes the authentication functions
- * 
+ *
  * @return void
  */
 function ws_pack_auth_expose_functions() {
-	expose_function(
+	elgg_ws_expose_function(
 		"auth.get_api_keys",
 		"ws_pack_auth_get_api_keys",
 		array(
@@ -45,8 +45,8 @@ function ws_pack_auth_expose_functions() {
 	);
 	
 	// reregister login function to allow login by email
-	unexpose_function("auth.gettoken");
-	expose_function(
+	elgg_ws_unexpose_function("auth.gettoken");
+	elgg_ws_expose_function(
 		"auth.gettoken",
 		"ws_pack_auth_gettoken",
 		array(
@@ -122,9 +122,9 @@ function ws_pack_auth_get_api_keys($application_id, $title, $description = "", $
  *
  * @param string $username username
  * @param string $password password
- * 
+ *
  * @throws SecurityException
- * 
+ *
  * @return void|string
  */
 function ws_pack_auth_gettoken($username, $password) {
