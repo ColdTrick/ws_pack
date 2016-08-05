@@ -1,4 +1,5 @@
-= Version History =
+Version history
+===============
 
 x.x:
 
