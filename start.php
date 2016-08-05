@@ -1,15 +1,19 @@
 <?php
+/**
+ * Main plugin file
+ */
 
 define('WS_PACK_API_NO_RESULTS', -100);
 define('WS_PACK_API_REGISTRATION_DISABLED', -110);
 
+// load libs
 require_once(dirname(__FILE__) . '/lib/events.php');
 require_once(dirname(__FILE__) . '/lib/functions.php');
 require_once(dirname(__FILE__) . '/lib/hooks.php');
 
+// register default Elgg events
 elgg_register_event_handler('plugins_boot', 'system', 'ws_pack_plugins_boot');
 elgg_register_event_handler('init', 'system', 'ws_pack_init');
-elgg_register_event_handler('pagesetup', 'system', 'ws_pack_pagesetup');
 
 /**
  * Validate a given SSO secret as soon as possible
@@ -76,6 +80,10 @@ function ws_pack_init() {
 	elgg_register_event_handler('created', 'river', 'ws_pack_created_river_event_handler');
 	elgg_register_event_handler('upgrade', 'system', '\ColdTrick\WsPack\Upgrade::checkClasses');
 	
+	// register admin menu items
+	// @todo move to class
+	elgg_register_admin_menu_item('administer', 'ws_pack', 'administer_utilities');
+	
 	// register actions
 	elgg_register_action('ws_pack/application/activate', dirname(__FILE__) . '/actions/application/activate.php', 'admin');
 	elgg_register_action('ws_pack/application/deactivate', dirname(__FILE__) . '/actions/application/deactivate.php', 'admin');
@@ -87,13 +95,4 @@ function ws_pack_init() {
 	
 	// register shutdown function
 	register_shutdown_function('ws_pack_shutdown_user_counter');
-}
-
-/**
- * Perform actions during page setup
- *
- * @return void
- */
-function ws_pack_pagesetup() {
-	elgg_register_admin_menu_item('administer', 'ws_pack', 'administer_utilities');
 }
