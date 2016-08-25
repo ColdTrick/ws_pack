@@ -215,6 +215,34 @@ function ws_pack_rest_init_hook_handler($hook, $type, $returnvalue, $params) {
 }
 
 /**
+ * Routes the favicon-64.png
+ *
+ * @param string $hook        name of the hook
+ * @param string $type        type of the hook
+ * @param string $returnvalue current return value
+ * @param array  $params      hook parameters
+ *
+ * @return void
+ */
+function ws_pack_site_icon_handler($hook, $type, $returnvalue, $params) {
+	$page = elgg_extract('segments', $returnvalue);
+	
+	$icon = elgg_extract(0, $page);
+	if (empty($icon)) {
+		return;
+	}
+	
+	if ($icon !== 'favicon-64.png') {
+		return;
+	}
+
+	header('Content-Type: image/png');
+	echo elgg_view($icon);
+	
+	return false;
+}
+
+/**
  * Store the used API application for future use
  *
  * @param string $hook        name of the hook
