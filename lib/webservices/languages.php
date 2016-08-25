@@ -11,9 +11,9 @@ ws_pack_languages_expose_functions();
  */
 function ws_pack_languages_expose_functions() {
 	elgg_ws_expose_function(
-		"languages.get_lang_file",
-		"ws_pack_get_lang_file",
-		array (),
+		'languages.get_lang_file',
+		'ws_pack_get_lang_file',
+		[],
 		'',
 		'GET',
 		true,
@@ -29,41 +29,49 @@ function ws_pack_get_lang_file() {
 	
 	if (!empty($user) && !empty($api_application)) {
 
-		$translations = array();
+		$translations = [];
 
 		//kinds of translations
-		$fields = array (
-			"members",
-			"search",
-			"groups",
-			"friends",
-			"notifications",
-			"messages",
-			"messageboard",
-			"likes",
-			"invitefriends",
-			"discussion",
-			"profile",
-			"user",
-			"usersettings",
-			"date",
-			"email"
-		);
-
+		$fields = [
+			'members',
+			'search',
+			'groups',
+			'friends',
+			'notifications',
+			'messages',
+			'messageboard',
+			'likes',
+			'invitefriends',
+			'discussion',
+			'profile',
+			'user',
+			'usersettings',
+			'date',
+			'email',
+		];
+		
+		global $_ELGG;
+		
+		$elgg_translations = $_ELGG->translations['en'];
+		$user_lang = get_current_language();
+		if ($user_lang !== 'en') {
+			if (array_key_exists($user_lang, $_ELGG->translations)) {
+				$elgg_translations = array_merge($elgg_translations, $_ELGG->translations[$user_lang]);
+			}
+		}
+	
 		//load and iterate the language cached by the site
-		foreach ($GLOBALS["CONFIG"]->translations as $trans) {
-			foreach ($trans as $k => $v) {
-				if (strpos($k, ":")) {
-					$parts = explode(':', $k);
-					$new_key = $parts[1];
-					foreach ($fields as $field) {
-						if ($parts[0] == $field) {
-							$translations[$field][$new_key] = $v;
-						}
+		foreach ($elgg_translations as $k => $v) {
+			if (strpos($k, ':')) {
+				$parts = explode(':', $k);
+				$new_key = $parts[1];
+				foreach ($fields as $field) {
+					if ($parts[0] == $field) {
+						$translations[$field][$new_key] = $v;
 					}
-				} else {
-					$translations["general"][$k] = $v;
 				}
+			} else {
+				$translations['general'][$k] = $v;
 			}
 		}
 
@@ -72,7 +80,7 @@ function ws_pack_get_lang_file() {
 	}
 	
 	if ($result === false) {
-		$result = new ErrorResult(elgg_echo("ws_pack:error:notfound"));
+		$result = new ErrorResult(elgg_echo('ws_pack:error:notfound'));
 	}
 
 	return $result;
