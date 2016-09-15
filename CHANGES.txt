@@ -1,9 +1,18 @@
 Version history
 ===============
 
-x.x:
+2.0 (2016-09-15):
 
+- added: requirement for Web services plugin
+- added: route to handle site favicon link
+- added: forward if security data is passed and add a time limit to secret
+- changed: Elgg requirement
 - fixed: auth_gettoken not working with email address
+- fixed: call to deprecated functions
+- fixed: correctly (un)set class assosiation
+- fixed: updated the translations API call for Elgg 2.0
+- fixed: wrong params in overruled function
+- fixed: prevent simple_html_dom() multiple loading
 
 1.0 (2013-04-22):
 
