@@ -64,7 +64,6 @@ class APIApplicationUserSetting extends ElggObject {
 	 * @return bool
 	 */
 	public function unregisterFromPushNotifications($service_name) {
-		$result = false;
 		
 		if (empty($service_name)) {
 			return false;
