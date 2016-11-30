@@ -80,6 +80,7 @@ function ws_pack_init() {
 	// register event handlers
 	elgg_register_event_handler('created', 'river', 'ws_pack_created_river_event_handler');
 	elgg_register_event_handler('upgrade', 'system', '\ColdTrick\WsPack\Upgrade::checkClasses');
+	elgg_register_event_handler('shutdown', 'system', 'ws_pack_shutdown_user_counter');
 	
 	// register admin menu items
 	// @todo move to class
@@ -93,7 +94,4 @@ function ws_pack_init() {
 	
 	elgg_register_action('ws_pack/push_service/delete', dirname(__FILE__) . '/actions/push_service/delete.php', 'admin');
 	elgg_register_action('ws_pack/push_service/delete_user', dirname(__FILE__) . '/actions/push_service/delete_user.php');
-	
-	// register shutdown function
-	register_shutdown_function('ws_pack_shutdown_user_counter');
 }

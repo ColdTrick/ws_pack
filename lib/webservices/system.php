@@ -57,17 +57,13 @@ function ws_pack_system_expose_functions() {
 function ws_pack_system_api_register_push_notification_service($service_name, $settings) {
 	$result = false;
 	
-	if ($api_application = ws_pack_get_current_api_application()) {
+	$api_application = ws_pack_get_current_api_application();
+	if (!empty($api_application)) {
 		
-		switch ($service_name) {
-			case "appcelerator":
-				if ($api_application->registerPushNotificationService($service_name, $settings)) {
-					$result = new SuccessResult($service_name);
-				}
-				break;
-			default:
-				$result = new ErrorResult(elgg_echo("ws_pack:push_notifications:error:unsupported_service", array($service_name)));
-				break;
+		if ($api_application->registerPushNotificationService($service_name, $settings)) {
+			$result = new SuccessResult($service_name);
+		} else {
+			$result = new ErrorResult(elgg_echo("ws_pack:push_notifications:error:unsupported_service", [$service_name]));
 		}
 	}
 	
@@ -88,17 +84,13 @@ function ws_pack_system_api_register_push_notification_service($service_name, $s
 function ws_pack_system_api_unregister_push_notification_service($service_name) {
 	$result = false;
 	
-	if ($api_application = ws_pack_get_current_api_application()) {
+	$api_application = ws_pack_get_current_api_application();
+	if (!empty($api_application)) {
 		
-		switch ($service_name) {
-			case "appcelerator":
-				if ($api_application->unregisterPushNotificationService($service_name)) {
-					$result = new SuccessResult($service_name);
-				}
-				break;
-			default:
-				$result = new ErrorResult(elgg_echo("ws_pack:push_notifications:error:unsupported_service", array($service_name)));
-				break;
+		if ($api_application->unregisterPushNotificationService($service_name)) {
+			$result = new SuccessResult($service_name);
+		} else {
+			$result = new ErrorResult(elgg_echo("ws_pack:push_notifications:error:unsupported_service", [$service_name]));
 		}
 	}
 	

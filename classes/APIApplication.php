@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API Application object
  *
@@ -35,7 +36,7 @@ class APIApplication extends ElggObject {
 	 * @param string  $reason    reason for disabling
 	 * @param boolean $recursive set to true to disable recursively
 	 *
-	 * @return boolean
+	 * @return bool
 	 *
 	 * @see ElggEntity::disable()
 	 */
@@ -54,7 +55,7 @@ class APIApplication extends ElggObject {
 	 *
 	 * @param bool $recursive Recursively enable all entities disabled with the entity?
 	 *
-	 * @return boolean
+	 * @return bool
 	 *
 	 * @see ElggEntity::enable()
 	 */
@@ -90,17 +91,27 @@ class APIApplication extends ElggObject {
 	 *
 	 * @param boolean $recursive if the delete should be recursive
 	 *
-	 * @return boolean
+	 * @return bool
 	 *
 	 * @see ElggEntity::delete()
 	 */
 	public function delete($recursive = true) {
 		
-		if ($keys = $this->getApiKeys()) {
+		$keys = $this->getApiKeys();
+		if (!empty($keys)) {
 			remove_api_user($this->site_guid, $keys['api_key']);
 		}
 		
 		return parent::delete($recursive);
+	}
+	
+	/**
+	 *
+	 * {@inheritDoc}
+	 * @see ElggObject::getDisplayName()
+	 */
+	public function getDisplayName() {
+		return $this->getTitle();
 	}
 	
 	/**
@@ -124,30 +135,29 @@ class APIApplication extends ElggObject {
 	/**
 	 * Returns the status code
 	 *
-	 * @return SuccessResult|ErrorResult
+	 * @return int
 	 */
 	public function getStatusCode() {
+		
 		// is this entity enabled
-		if ($this->isEnabled()) {
-			// does it have a connected API user
-			if (isset($this->api_user_id)) {
-				// is the API user active
-				if ($this->getApiKeys()) {
-					$result = SuccessResult::$RESULT_SUCCESS;
-				} else {
-					// API user is inactive
-					$result = ErrorResult::$RESULT_FAIL_APIKEY_INACTIVE;
-				}
-			} else {
-				// no API user yet
-				$result = self::STATE_PENDING;
-			}
-		} else {
+		if (!$this->isEnabled()) {
 			// this application has been disabled
-			$result = ErrorResult::$RESULT_FAIL_APIKEY_DISABLED;
+			return ErrorResult::$RESULT_FAIL_APIKEY_DISABLED;
 		}
 		
-		return $result;
+		// does it have a connected API user
+		if (!isset($this->api_user_id)) {
+			// no API user yet
+			return self::STATE_PENDING;
+		}
+		
+		// is the API user active
+		if ($this->getApiKeys()) {
+			return SuccessResult::$RESULT_SUCCESS;
+		}
+		
+		// API user is inactive
+		return ErrorResult::$RESULT_FAIL_APIKEY_INACTIVE;
 	}
 	
 	/**
@@ -224,32 +234,49 @@ class APIApplication extends ElggObject {
 	 * @param string $service_name name of the service
 	 * @param array  $settings     additional settings to be save with the notification service
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function registerPushNotificationService($service_name, $settings) {
-		$result = false;
 		
-		if (!empty($service_name) && !empty($settings)) {
-			if (!is_array($settings)) {
-				$settings = array($settings);
-			}
-			
-			switch ($service_name) {
-				case 'appcelerator':
-					if ($this->getPushNotificationService($service_name)) {
-						// already registered
-						$result = true;
-					} else {
-						$value = array($service_name => $settings);
-						
-						$result = $this->annotate('push_notification_service', json_encode($value), ACCESS_PUBLIC);
-					}
-					break;
-			}
-			
+		if (empty($service_name) || empty($settings)) {
+			return false;
 		}
 		
-		return $result;
+		if (!is_array($settings)) {
+			$settings = [$settings];
+		}
+		
+		$handler = $this->getPushNotificationServiceHandler($service_name);
+		if (empty($handler)) {
+			// not supported
+			return false;
+		}
+		
+		if ($this->getPushNotificationService($service_name)) {
+			// already registered
+			return true;
+		}
+		
+		$value = [$service_name => $settings];
+		
+		return (bool) $this->annotate('push_notification_service', json_encode($value), ACCESS_PUBLIC);
+	}
+	
+	/**
+	 * Check if a push notification service is registered
+	 *
+	 * @param string $service_name the name of the push notification service
+	 *
+	 * @return bool
+	 */
+	public function isRegisteredPushNotificationService($service_name) {
+		
+		$services = $this->getPushNotificationServices();
+		if (empty($services)) {
+			return false;
+		}
+		
+		return isset($services[$service_name]);
 	}
 	
 	/**
@@ -257,63 +284,66 @@ class APIApplication extends ElggObject {
 	 *
 	 * @param string $service_name service name
 	 *
-	 * @return array|boolean
+	 * @return false|array
 	 */
 	public function getPushNotificationService($service_name) {
-		$result = false;
 		
-		if (!empty($service_name)) {
-			if ($services = $this->getAnnotations('push_notification_service', false)) {
-				foreach ($services as $service) {
-					if ($value = $service->value) {
-						if ($value = json_decode($value, true)) {
-							if (array_key_exists($service_name, $value)) {
-								$result = $value[$service_name];
-								break;
-							}
-						}
-					}
-				}
-			}
+		if (empty($service_name)) {
+			return false;
 		}
 		
-		return $result;
+		$services = $this->getPushNotificationServices();
+		if (empty($services)) {
+			return false;
+		}
+		
+		return elgg_extract($service_name, $services, false);
 	}
 	
 	/**
 	 * Returns all push notifcation services
 	 *
-	 * @param boolean $get_annotations set to true to return the annotations instead of an array with settings
+	 * @param bool $get_annotations set to true to return the annotations instead of an array with settings
 	 *
-	 * @return array|boolean
+	 * @return false|array
 	 */
 	public function getPushNotificationServices($get_annotations = false) {
-		$result = false;
 		
-		if ($services = $this->getAnnotations('push_notification_service', false)) {
+		$services = $this->getAnnotations([
+			'annotation_name' => 'push_notification_service',
+			'limit' => false,
+		]);
+		if (empty($services)) {
+			return false;
+		}
+		
+		if (!empty($get_annotations)) {
+			return $services;
+		}
+		
+		$tmp_result = [];
+		
+		foreach ($services as $service) {
+			$value = $service->value;
+			if (empty($value)) {
+				continue;
+			}
 			
-			if (empty($get_annotations)) {
-				$tmp_result = array();
-				
-				foreach ($services as $service) {
-					if ($value = $service->value) {
-						if ($value = json_decode($value, true)) {
-							foreach ($value as $service_name => $settings) {
-								$tmp_result[$service_name] = $settings;
-							}
-						}
-					}
-				}
-				
-				if (!empty($tmp_result)) {
-					$result = $tmp_result;
-				}
-			} else {
-				$result = $services;
+			$value = json_decode($value, true);
+			if (empty($value)) {
+				continue;
+			}
+			
+			foreach ($value as $service_name => $settings) {
+				$tmp_result[$service_name] = $settings;
 			}
 		}
 		
-		return $result;
+		if (!empty($tmp_result)) {
+			return $tmp_result;
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -321,27 +351,37 @@ class APIApplication extends ElggObject {
 	 *
 	 * @param string $service_name name of the service
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function unregisterPushNotificationService($service_name) {
-		$result = false;
 		
-		if (!empty($service_name)) {
-			if ($services = $this->getAnnotations('push_notification_service', false)) {
-				foreach ($services as $service) {
-					if ($value = $service->value) {
-						if ($value = json_decode($value, true)) {
-							if (array_key_exists($service_name, $value)) {
-								$result = $service->delete();
-								break;
-							}
-						}
-					}
-				}
+		if (empty($service_name)) {
+			return false;
+		}
+		
+		$services = $this->getPushNotificationServices(true);
+		if (empty($services)) {
+			// nothing to remove
+			return true;
+		}
+		
+		foreach ($services as $service) {
+			$value = $service->value;
+			if (empty($value)) {
+				continue;
+			}
+			
+			$value = json_decode($value, true);
+			if (empty($value)) {
+				continue;
+			}
+			
+			if (isset($value[$service_name])) {
+				return $service->delete();
 			}
 		}
 		
-		return $result;
+		return false;
 	}
 	
 	/**
@@ -354,77 +394,124 @@ class APIApplication extends ElggObject {
 	 */
 	public function sendPushNotification($message, $potential_user_guids) {
 		
-		if (!empty($message) && !empty($potential_user_guids)) {
-			if (!is_array($potential_user_guids)) {
-				$potential_user_guids = array($potential_user_guids);
+		if (empty($message) || empty($potential_user_guids)) {
+			return;
+		}
+		
+		if (!is_array($potential_user_guids)) {
+			$potential_user_guids = [$potential_user_guids];
+		}
+		
+		$push_services = $this->getPushNotificationServices();
+		if (empty($push_services)) {
+			return;
+		}
+		
+		foreach ($push_services as $service_name => $settings) {
+			
+			$classname = $this->getPushNotificationServiceHandler($service_name);
+			if (empty($classname) || !class_exists($classname)) {
+				continue;
 			}
 			
-			if ($push_services = $this->getPushNotificationServices()) {
-				
-				foreach ($push_services as $service_name => $settings) {
-					$classname = 'WsPack' . ucfirst($service_name);
+			$notify_options = [
+				'type' => 'object',
+				'subtype' => APIApplicationUserSetting::SUBTYPE,
+				'limit' => false,
+				'owner_guids' => $potential_user_guids,
+				'container_guid' => $this->getGUID(),
+				'annotation_name' => $service_name,
+			];
+			
+			$annotations = elgg_get_annotations($notify_options);
+			if (empty($annotations)) {
+				continue;
+			}
+			
+			switch ($service_name) {
+				case 'appcelerator':
+					$channels = [];
 					
-					if (class_exists($classname)) {
-						$notify_options = array(
-							'type' => 'object',
-							'subtype' => APIApplicationUserSetting::SUBTYPE,
-							'limit' => false,
-							'owner_guids' => $potential_user_guids,
-							'container_guid' => $this->getGUID(),
-							'annotation_name' => $service_name
-						);
-						
-						if ($annotations = elgg_get_annotations($notify_options)) {
-							
-							switch ($service_name) {
-								case 'appcelerator':
-									$channels = array();
-									
-									foreach ($annotations as $annotation) {
-										if ($data = json_decode($annotation->value, true)) {
-											$channel = elgg_extract('channel', $data);
-											$user_id = elgg_extract('user_id', $data);
-											$count = (int) elgg_extract('count', $data, 0);
-											
-											if (!empty($channel) && !empty($user_id)) {
-												// increase count by one
-												$count++;
-												
-												// group by channel
-												if (!array_key_exists($channel, $channels)) {
-													$channels[$channel] = array();
-												}
-												
-												// group by count
-												if (!array_key_exists($count, $channels[$channel])) {
-													$channels[$channel][$count] = array();
-												}
-												
-												$channels[$channel][$count][] = $user_id;
-												
-												// save an update
-												$data['count'] = $count;
-												$annotation->value = json_encode($data);
-												$annotation->save();
-											}
-										}
-									}
-									
-									if (!empty($channels)) {
-										$push_service = new $classname($settings);
-										
-										foreach ($channels as $channel => $to_ids) {
-											$push_service->sendMessage($message, $channel, $to_ids);
-										}
-									}
-									
-									break;
-							}
+					foreach ($annotations as $annotation) {
+						$data = json_decode($annotation->value, true);
+						if (empty($data)) {
+							continue;
 						}
+						
+						$channel = elgg_extract('channel', $data);
+						$user_id = elgg_extract('user_id', $data);
+						$count = (int) elgg_extract('count', $data, 0);
+						
+						if (empty($channel) || empty($user_id)) {
+							continue;
+						}
+						
+						// increase count by one
+						$count++;
+						
+						// group by channel
+						if (!array_key_exists($channel, $channels)) {
+							$channels[$channel] = [];
+						}
+						
+						// group by count
+						if (!array_key_exists($count, $channels[$channel])) {
+							$channels[$channel][$count] = [];
+						}
+						
+						$channels[$channel][$count][] = $user_id;
+						
+						// save an update
+						$data['count'] = $count;
+						$annotation->value = json_encode($data);
+						$annotation->save();
 					}
-				}
+					
+					if (empty($channels)) {
+						break;
+					}
+					
+					$push_service = new $classname($settings);
+					
+					foreach ($channels as $channel => $to_ids) {
+						$push_service->sendMessage($message, $channel, $to_ids);
+					}
+					
+					break;
 			}
 		}
+	}
+	
+	/**
+	 * Get all available push notification services and their class handlers
+	 *
+	 * @return []
+	 */
+	protected function getPushNotificationServiceHandlers() {
+		
+		$result = [
+			'appcelerator' => 'WsPackAppcelerator',
+			'ionic_cloud' => 'WsPackIonicCloud',
+		];
+		
+		return elgg_trigger_plugin_hook('push_notification_services', 'ws_pack', [], $result);
+	}
+	
+	/**
+	 * Get the class handler for a push notification service
+	 *
+	 * @param string $service_name the name of the push service
+	 *
+	 * @return false|string
+	 */
+	protected function getPushNotificationServiceHandler($service_name) {
+		
+		if (empty($service_name)) {
+			return false;
+		}
+		
+		$handlers = $this->getPushNotificationServiceHandlers();
+		return elgg_extract($service_name, $handlers, false);
 	}
 }
 	

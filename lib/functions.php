@@ -7,9 +7,9 @@ global $ws_pack_current_api_application;
 
 /**
  * Return application for a given application id
- * 
+ *
  * @param string $application_id id of the applications
- * 
+ *
  * @return ElggEntity|boolean
  */
 function ws_pack_get_application_from_id($application_id) {
@@ -40,13 +40,13 @@ function ws_pack_get_application_from_id($application_id) {
 
 /**
  * Create a new application
- * 
+ *
  * @param string $application_id   id op the app
  * @param string $title            name of the app
  * @param string $description      description of the app
  * @param string $icon_url         url to an icon
  * @param array  $application_info array containing additional data about the application
- * 
+ *
  * @return APIApplication|boolean
  */
 function ws_pack_create_application($application_id, $title, $description = "", $icon_url = "", $application_info = array()) {
@@ -98,9 +98,9 @@ function ws_pack_create_application($application_id, $title, $description = "", 
 
 /**
  * Returns the application related to a given api user
- * 
+ *
  * @param string $api_user_id id of the api user
- * 
+ *
  * @return APIApplication|boolean
  */
 function ws_pack_get_application_from_api_user_id($api_user_id) {
@@ -129,9 +129,9 @@ function ws_pack_get_application_from_api_user_id($api_user_id) {
 
 /**
  * Returns the API user from a give api userid
- * 
+ *
  * @param string $api_user_id id of the api user
- * 
+ *
  * @return stdClass|boolean
  */
 function ws_pack_get_api_user_from_id($api_user_id) {
@@ -154,9 +154,9 @@ function ws_pack_get_api_user_from_id($api_user_id) {
 
 /**
  * Deactivate an api user
- * 
+ *
  * @param string $api_user_id api user id
- * 
+ *
  * @return boolean
  */
 function ws_pack_deactivate_api_user_from_id($api_user_id) {
@@ -177,9 +177,9 @@ function ws_pack_deactivate_api_user_from_id($api_user_id) {
 
 /**
  * Activate an api user
- * 
+ *
  * @param string $api_user_id api user id
- * 
+ *
  * @return boolean
  */
 function ws_pack_activate_api_user_from_id($api_user_id) {
@@ -200,9 +200,9 @@ function ws_pack_activate_api_user_from_id($api_user_id) {
 
 /**
  * Export entities to be used in webservices and adds additional data
- * 
+ *
  * @param array $entities entities to export
- * 
+ *
  * @return boolean|array
  */
 function ws_pack_export_entities($entities) {
@@ -279,9 +279,9 @@ function ws_pack_export_entities($entities) {
 
 /**
  * Export a single entity and add extra data
- * 
+ *
  * @param ElggEntity $entity entity to export
- * 
+ *
  * @return boolean|ElggEntity
  */
 function ws_pack_export_entity(ElggEntity $entity) {
@@ -301,9 +301,9 @@ function ws_pack_export_entity(ElggEntity $entity) {
 
 /**
  * Export river items
- * 
+ *
  * @param array $items river items to export
- * 
+ *
  * @return boolean|array
  */
 function ws_pack_export_river_items($items) {
@@ -402,9 +402,9 @@ function ws_pack_export_river_items($items) {
 
 /**
  * Converts rows to guids
- * 
+ *
  * @param stdClass $row database row
- * 
+ *
  * @return int
  */
 function ws_pack_row_to_guid($row) {
@@ -413,9 +413,9 @@ function ws_pack_row_to_guid($row) {
 
 /**
  * Sets the global current API application
- * 
+ *
  * @param APIApplication $application application to set
- * 
+ *
  * @return boolean
  */
 function ws_pack_set_current_api_application(APIApplication $application) {
@@ -432,7 +432,7 @@ function ws_pack_set_current_api_application(APIApplication $application) {
 
 /**
  * Returns the global API Application
- * 
+ *
  * @return APIApplication
  */
 function ws_pack_get_current_api_application() {
@@ -443,47 +443,47 @@ function ws_pack_get_current_api_application() {
 
 /**
  * Returns application specific user settings
- * 
+ *
  * @param ElggUser       $user            user entity
  * @param APIApplication $api_application application entity
- * 
- * @return boolean|APIApplicationUserSetting
+ *
+ * @return false|APIApplicationUserSetting
  */
 function ws_pack_get_application_user_settings(ElggUser $user, APIApplication $api_application) {
-	$result = false;
 	
-	if (!empty($user) && !empty($api_application)) {
-		if (elgg_instanceof($user, "user") && elgg_instanceof($api_application, "object", APIApplication::SUBTYPE)) {
-			$options = array(
-				"type" => "object",
-				"subtype" => APIApplicationUserSetting::SUBTYPE,
-				"limit" => 1,
-				"owner_guid" => $user->getGUID(),
-				"container_guid" => $api_application->getGUID()
-			);
-			
-			if ($entities = elgg_get_entities($options)) {
-				$result = $entities[0];
-			} else {
-				$entity = new APIApplicationUserSetting();
-				$entity->owner_guid = $user->getGUID();
-				$entity->container_guid = $api_application->getGUID();
-				
-				if ($entity->save()) {
-					$result = $entity;
-				}
-			}
+	if (!($user instanceof ElggUser) || !($api_application instanceof APIApplication)) {
+		return false;
+	}
+	
+	$options = [
+		"type" => "object",
+		"subtype" => APIApplicationUserSetting::SUBTYPE,
+		"limit" => 1,
+		"owner_guid" => $user->getGUID(),
+		"container_guid" => $api_application->getGUID(),
+	];
+	
+	$entities = elgg_get_entities($options);
+	if (!empty($entities)) {
+		return $entities[0];
+	} else {
+		$entity = new APIApplicationUserSetting();
+		$entity->owner_guid = $user->getGUID();
+		$entity->container_guid = $api_application->getGUID();
+		
+		if ($entity->save()) {
+			return $entity;
 		}
 	}
 	
-	return $result;
+	return false;
 }
 
 /**
  * Modify a given URL to be a single sign on URL
- * 
+ *
  * @param string $url url to be transformed
- * 
+ *
  * @return string
  */
 function ws_pack_create_sso_url($url) {
@@ -528,10 +528,10 @@ function ws_pack_create_sso_url($url) {
 
 /**
  * Generates a Single Sign On secret for a give user
- *  
+ *
  * @param ElggUser $user      user to generate the secret for
  * @param int      $timestamp timestamp to limit the durability of the secret
- * 
+ *
  * @return boolean|string
  */
 function ws_pack_generate_sso_secret(ElggUser $user, $timestamp) {
@@ -556,10 +556,10 @@ function ws_pack_generate_sso_secret(ElggUser $user, $timestamp) {
 
 /**
  * Validate a Single Sign On secret for a given user
- * 
+ *
  * @param string $user_guid guid of the user to check
  * @param string $secret    secret code to validate
- * 
+ *
  * @return boolean
  */
 function ws_pack_validate_sso_secret($user_guid, $secret, $timestamp) {
@@ -599,30 +599,36 @@ function ws_pack_validate_sso_secret($user_guid, $secret, $timestamp) {
 
 /**
  * Shutdown function to reset the counter on the pushnotification service
- * 
+ *
  * @return void
  */
 function ws_pack_shutdown_user_counter() {
 	
-	if ($user = elgg_get_logged_in_user_entity()) {
-		$options = array(
-			"type" => "object",
-			"subtype" => APIApplicationUserSetting::SUBTYPE,
-			"owner_guid" => $user->getGUID(),
-			"limit" => false
-		);
-		
-		if ($api_user_settings = elgg_get_entities($options)) {
-			foreach ($api_user_settings as $api_user_setting) {
-				$api_user_setting->resetPushNotificationCounter();
-			}
-		}
+	$user = elgg_get_logged_in_user_entity();
+	if (empty($user)) {
+		return;
+	}
+	
+	$options = [
+		"type" => "object",
+		"subtype" => APIApplicationUserSetting::SUBTYPE,
+		"owner_guid" => $user->getGUID(),
+		"limit" => false,
+	];
+	
+	$api_user_settings = elgg_get_entities($options);
+	if (empty($api_user_settings)) {
+		return;
+	}
+	
+	foreach ($api_user_settings as $api_user_setting) {
+		$api_user_setting->resetPushNotificationCounter();
 	}
 }
 
 /**
  * Strips secret stuff from current url and forwards
- * 
+ *
  * @return void
  */
 function ws_pack_forward_without_secret() {
@@ -632,7 +638,7 @@ function ws_pack_forward_without_secret() {
 	unset($query['u']);
 	unset($query['s']);
 	unset($query['t']);
-	$url_parts["query"] = http_build_query($query);	
+	$url_parts["query"] = http_build_query($query);
 
 	if (empty($url_parts['query'])) {
 		unset($url_parts['query']);

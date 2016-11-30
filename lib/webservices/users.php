@@ -92,20 +92,22 @@ function ws_pack_users_register_for_push_notifications($service_name, $settings)
 	
 	if (!empty($user) && !empty($api_application)) {
 		
-		if ($api_application_user_settings = ws_pack_get_application_user_settings($user, $api_application)) {
+		// is the service registered to the application
+		if ($api_application->isRegisteredPushNotificationService($service_name)) {
 			
-			switch ($service_name) {
-				case "appcelerator":
-					if ($api_application_user_settings->registerForPushNotifications($service_name, $settings)) {
-						$result = new SuccessResult($service_name);
-					}
-					break;
-				default:
-					$result = new ErrorResult(elgg_echo("ws_pack:push_notifications:error:unsupported_service", array($service_name)));
-					break;
+			$api_application_user_settings = ws_pack_get_application_user_settings($user, $api_application);
+			if (!empty($api_application_user_settings)) {
+				
+				if ($api_application_user_settings->registerForPushNotifications($service_name, $settings)) {
+					$result = new SuccessResult($service_name);
+				} else {
+					$result = new ErrorResult(elgg_echo("ws_pack:push_notifications:error:unsupported_service", [$service_name]));
+				}
+			} else {
+				$result = new ErrorResult(elgg_echo("ws_pack:user_settings:error:notfound"));
 			}
 		} else {
-			$result = new ErrorResult(elgg_echo("ws_pack:user_settings:error:notfound"));
+			$result = new ErrorResult(elgg_echo("ws_pack:push_notifications:error:unsupported_service", [$service_name]));
 		}
 	}
 	
@@ -130,21 +132,20 @@ function ws_pack_users_unregister_from_push_notifications($service_name) {
 	$api_application = ws_pack_get_current_api_application();
 	
 	if (!empty($user) && !empty($api_application)) {
-		
-		if ($api_application_user_settings = ws_pack_get_application_user_settings($user, $api_application)) {
+		// is the service registered
+		if ($api_application->isRegisteredPushNotificationService($service_name)) {
 			
-			switch ($service_name) {
-				case "appcelerator":
-					if ($api_application_user_settings->unregisterFromPushNotifications($service_name)) {
-						$result = new SuccessResult($service_name);
-					}
-					break;
-				default:
-					$result = new ErrorResult(elgg_echo("ws_pack:push_notifications:error:unsupported_service", array($service_name)));
-					break;
+			$api_application_user_settings = ws_pack_get_application_user_settings($user, $api_application);
+			if (!empty($api_application_user_settings)) {
+				
+				if ($api_application_user_settings->unregisterFromPushNotifications($service_name)) {
+					$result = new SuccessResult($service_name);
+				}
+			} else {
+				$result = new ErrorResult(elgg_echo("ws_pack:user_settings:error:notfound"));
 			}
 		} else {
-			$result = new ErrorResult(elgg_echo("ws_pack:user_settings:error:notfound"));
+			$result = new ErrorResult(elgg_echo("ws_pack:push_notifications:error:unsupported_service", [$service_name]));
 		}
 	}
 	
