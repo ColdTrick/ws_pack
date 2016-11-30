@@ -429,53 +429,7 @@ class APIApplication extends ElggObject {
 			}
 			
 			switch ($service_name) {
-				case 'appcelerator':
-					$channels = [];
-					
-					foreach ($annotations as $annotation) {
-						$data = json_decode($annotation->value, true);
-						if (empty($data)) {
-							continue;
-						}
-						
-						$channel = elgg_extract('channel', $data);
-						$user_id = elgg_extract('user_id', $data);
-						$count = (int) elgg_extract('count', $data, 0);
-						
-						if (empty($channel) || empty($user_id)) {
-							continue;
-						}
-						
-						// increase count by one
-						$count++;
-						
-						// group by channel
-						if (!array_key_exists($channel, $channels)) {
-							$channels[$channel] = [];
-						}
-						
-						// group by count
-						if (!array_key_exists($count, $channels[$channel])) {
-							$channels[$channel][$count] = [];
-						}
-						
-						$channels[$channel][$count][] = $user_id;
-						
-						// save an update
-						$data['count'] = $count;
-						$annotation->value = json_encode($data);
-						$annotation->save();
-					}
-					
-					if (empty($channels)) {
-						break;
-					}
-					
-					$push_service = new $classname($settings);
-					
-					foreach ($channels as $channel => $to_ids) {
-						$push_service->sendMessage($message, $channel, $to_ids);
-					}
+				case 'ionic_cloud':
 					
 					break;
 			}
@@ -490,7 +444,6 @@ class APIApplication extends ElggObject {
 	protected function getPushNotificationServiceHandlers() {
 		
 		$result = [
-			'appcelerator' => 'WsPackAppcelerator',
 			'ionic_cloud' => 'WsPackIonicCloud',
 		];
 		
