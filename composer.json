@@ -10,7 +10,7 @@
 	},
 	"require": {
 		"composer/installers": "^1.0.8",
-		"dmitrovskiy/ionic-push-php": "~1.0.0"
+		"coldtrick/ionic-push-php": "dev-master"
 	},
 	"require-dev": {
 		"coldtrick/sniffs": "dev-master",

@@ -4,9 +4,57 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d8adad95bde8567fff83eed0473eaddd",
-    "content-hash": "07a63979e72f7a1b3dbacddd7331b0ea",
+    "hash": "b53ee90f6a3963beee9fd8ace415be80",
+    "content-hash": "c1e4bf37733df3c56012b549650a71ba",
     "packages": [
+        {
+            "name": "coldtrick/ionic-push-php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ColdTrick/ionic-push-php.git",
+                "reference": "fc01102732092f836e2493881669724ff6c60a0a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ColdTrick/ionic-push-php/zipball/fc01102732092f836e2493881669724ff6c60a0a",
+                "reference": "fc01102732092f836e2493881669724ff6c60a0a",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.1",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Dmitrovskiy\\IonicPush\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vladimir Dmitrovskiy",
+                    "email": "dmitrovskiyvl@gmail.com",
+                    "homepage": "https://github.com/dmitrovskiy",
+                    "role": "Developer"
+                }
+            ],
+            "description": "ionic push notifications php sdk",
+            "homepage": "https://github.com/dmitrovskiy/ionic-push-php",
+            "keywords": [
+                "ionic",
+                "notifications",
+                "push"
+            ],
+            "time": "2016-12-22 14:11:11"
+        },
         {
             "name": "composer/installers",
             "version": "v1.2.0",
@@ -115,81 +163,33 @@
             "time": "2016-08-13 20:53:52"
         },
         {
-            "name": "dmitrovskiy/ionic-push-php",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/dmitrovskiy/ionic-push-php.git",
-                "reference": "155bdfdc3e800c49fa7e890959ab13f8ec1bd920"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/dmitrovskiy/ionic-push-php/zipball/155bdfdc3e800c49fa7e890959ab13f8ec1bd920",
-                "reference": "155bdfdc3e800c49fa7e890959ab13f8ec1bd920",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/guzzle": "6.1.*",
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "4.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Dmitrovskiy\\IonicPush\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Vladimir Dmitrovskiy",
-                    "email": "dmitrovskiyvl@gmail.com",
-                    "homepage": "https://github.com/dmitrovskiy",
-                    "role": "Developer"
-                }
-            ],
-            "description": "ionic push notifications php sdk",
-            "homepage": "https://github.com/dmitrovskiy/ionic-push-php",
-            "keywords": [
-                "ionic",
-                "notifications",
-                "push"
-            ],
-            "time": "2016-07-07 11:56:13"
-        },
-        {
             "name": "guzzlehttp/guzzle",
-            "version": "6.1.1",
+            "version": "6.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "c6851d6e48f63b69357cbfa55bca116448140e0c"
+                "reference": "ebf29dee597f02f09f4d5bbecc68230ea9b08f60"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/c6851d6e48f63b69357cbfa55bca116448140e0c",
-                "reference": "c6851d6e48f63b69357cbfa55bca116448140e0c",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/ebf29dee597f02f09f4d5bbecc68230ea9b08f60",
+                "reference": "ebf29dee597f02f09f4d5bbecc68230ea9b08f60",
                 "shasum": ""
             },
             "require": {
-                "guzzlehttp/promises": "~1.0",
-                "guzzlehttp/psr7": "~1.1",
-                "php": ">=5.5.0"
+                "guzzlehttp/promises": "^1.0",
+                "guzzlehttp/psr7": "^1.3.1",
+                "php": ">=5.5"
             },
             "require-dev": {
                 "ext-curl": "*",
-                "phpunit/phpunit": "~4.0",
-                "psr/log": "~1.0"
+                "phpunit/phpunit": "^4.0",
+                "psr/log": "^1.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "6.1-dev"
+                    "dev-master": "6.2-dev"
                 }
             },
             "autoload": {
@@ -222,7 +222,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2015-11-23 00:47:50"
+            "time": "2016-10-08 15:01:37"
         },
         {
             "name": "guzzlehttp/promises",
@@ -521,6 +521,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "coldtrick/ionic-push-php": 20,
         "coldtrick/sniffs": 20,
         "coldtrick/releases": 20
     },
