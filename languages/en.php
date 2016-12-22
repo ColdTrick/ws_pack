@@ -24,6 +24,9 @@ Disabled: These applications have been denied access to the API.",
 	
 	// plugin settings
 	'ws_pack:settings:allow_application_registration' => "Allow new applications to register for API usage",
+	'ws_pack:settings:ionic' => "Ionic Cloud settings",
+	'ws_pack:settings:ionic:api_token' => "Ionic Cloud API token for push notifications",
+	'ws_pack:settings:ionic:api_token:help' => "If you wish to be able to use the Community Companion app with push notifications, you'll need an API token. Please contact ColdTrick IT Solutions for more information: info@coldtrick.com",
 
 	// user settings
 	'ws_pack:usersettings:none' => "No webservices were found",

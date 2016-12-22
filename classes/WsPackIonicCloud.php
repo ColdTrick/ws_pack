@@ -1,4 +1,7 @@
 <?php
+
+use ColdTrick\WsPack\IonicPushService;
+
 /**
  * IonicCloud push notification service
  *
@@ -6,18 +9,16 @@
  */
 class WsPackIonicCloud extends WsPackPushNotificationService {
 	
-	const SERVICE_NAME = "ionic_cloud";
-	
-	protected $LOGIN_URL = "https://api.cloud.appcelerator.com/v1/users/login.json";
-	protected $NOTIFY_URL = "https://api.cloud.appcelerator.com/v1/push_notification/notify.json";
+	const SERVICE_NAME = 'ionic_cloud';
 	
 	private $settings;
-	private $login_cookie;
+	private $plugin_settings;
+	private $iconic_client;
 	
 	/**
 	 * Class constructor
 	 *
-	 * @param array $settings array of settings related to appcelerator
+	 * @param array $settings array of settings related to ionic cloud
 	 *
 	 * @return void
 	 */
@@ -31,178 +32,114 @@ class WsPackIonicCloud extends WsPackPushNotificationService {
 	/**
 	 * Sends a message
 	 *
-	 * @param string $text    message to be sent
-	 * @param string $channel channel of the message
-	 * @param array  $to_ids  array of ids to send the message to
+	 * @param string $text         message to be sent
+	 * @param mixed  $device_token the device token to send the message to
 	 *
 	 * @see WsPackPushNotificationInterface::sendMessage()
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
-	public function sendMessage($text = "", $channel = "", $to_ids = array()) {
-		$result = false;
+	public function sendMessage($text, $device_token) {
 		
-		if (!empty($text) && !empty($channel) && !empty($to_ids)) {
-			
-			if ($this->login()) {
-				$ch = curl_init($this->NOTIFY_URL . "?key=" . $this->getSetting("app_key"));
-				
-				$site = elgg_get_site_entity();
-				
-				curl_setopt($ch, CURLOPT_POST, true);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($ch, CURLOPT_COOKIEJAR, $this->login_cookie);
-				curl_setopt($ch, CURLOPT_COOKIEFILE, $this->login_cookie);
-				
-				foreach ($to_ids as $count => $user_ids) {
-					
-					if (!empty($user_ids)) {
-						curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-							"channel" => $channel,
-							"to_ids" => implode(",", $user_ids),
-							"payload" => json_encode(array(
-								"title" => $site->name,
-								"alert" => $text,
-								"badge" => $count,
-								"sound" => "default"
-							))
-						));
-						
-						$api_result = curl_exec($ch);
-						
-						if ($this->validateApiResult($api_result)) {
-							$result = true;
-						}
-						
-						// log
-						$this->log(array("notify", $result, count($user_ids), $channel));
-					}
-				}
-				
-				curl_close($ch);
-			}
+		if (empty($text) || empty($device_token)) {
+			return false;
 		}
 		
-		return $result;
+		if (!is_array($device_token)) {
+			$device_token = [$device_token];
+		}
+		
+		$client = $this->getIonicClient();
+		if (empty($client)) {
+			return false;
+		}
+		
+		$notification = [
+			'message' => $text,
+		];
+		
+		try {
+			$result = $client->notify($device_token, $notification);
+		} catch (\Exception $e) {
+			elgg_log("WSPack IonicPush: {$e->getMessage()}", 'NOTICE');
+			return false;
+		}
+		
+		$status_code = $result->getStatusCode();
+		
+		return ($status_code >= 200 && $status_code < 300);
 	}
 	
 	/**
-	 * Login to the Appcelerator service
 	 *
-	 * @return boolean
-	 */
-	private function login() {
-		$result = false;
-		
-		if (!isset($this->login_cookie)) {
-			$this->login_cookie = tempnam(sys_get_temp_dir(), "Appcelerator");
-			
-			$ch = curl_init($this->LOGIN_URL . "?key=" . $this->getSetting("app_key"));
-			
-			curl_setopt($ch, CURLOPT_POST, true);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_COOKIEJAR, $this->login_cookie);
-			curl_setopt($ch, CURLOPT_COOKIEFILE, $this->login_cookie);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-				"login" => $this->getSetting("username"),
-				"password" => $this->getSetting("password")
-			));
-			
-			$api_result = curl_exec($ch);
-			
-			if ($this->validateApiResult($api_result)) {
-				$result = true;
-			} else {
-				$this->login_cookie = false;
-			}
-			
-			curl_close($ch);
-		} elseif ($this->login_cookie !== false) {
-			$result = true;
-		}
-		
-		return $result;
-	}
-	
-	/**
-	 * Returns a service setting
-	 *
-	 * @param string $setting name of the settings
-	 *
-	 * @return boolean|string
-	 */
-	private function getSetting($setting) {
-		$result = false;
-		
-		if (isset($this->settings) && is_array($this->settings)) {
-			if (array_key_exists($setting, $this->settings)) {
-				$result = $this->settings[$setting];
-			}
-		}
-		
-		return $result;
-	}
-	
-	/**
-	 * Validates the API result
-	 *
-	 * @param string $api_result result of an API call
-	 *
-	 * @return boolean
-	 */
-	private function validateApiResult($api_result) {
-		$result = false;
-		
-		if (!empty($api_result)) {
-			if (is_string($api_result)) {
-				$api_result = json_decode($api_result, true);
-			}
-			
-			if (isset($api_result["meta"]) && isset($api_result["meta"]["status"])) {
-				if ($api_result["meta"]["status"] == "ok") {
-					$result = true;
-				}
-			}
-		}
-		
-		return $result;
-	}
-	
-	/**
-	 * Logs data to a file for debug purposes
-	 *
-	 * @param array $contents data to be logged
-	 *
-	 * @return int|boolean
-	 *
+	 * {@inheritDoc}
 	 * @see WsPackPushNotificationService::log()
 	 */
-	protected function log(array $contents) {
-		$dataroot = elgg_get_config("dataroot");
-		$site = elgg_get_site_entity();
+	protected function log($content) {
+		// @TODO fill this
+	}
+	
+	/**
+	 * Load plugin settings related to Ionic Cloud
+	 *
+	 * @return void
+	 */
+	private function loadPluginSettings() {
 		
-		// make sure the path is available
-		$path = $dataroot . "ws_pack_logging/" . $site->getGUID() . "/" . self::SERVICE_NAME . "/";
-		if (!is_dir($path)) {
-			mkdir($path, 0755, true);
+		if (isset($this->plugin_settings)) {
+			return;
 		}
 		
-		// make a file heading
-		$filename = $path . date("Ymd") . ".log";
-		if (!file_exists($filename)) {
-			file_put_contents($filename, implode(";", array("date", "timestamp", "method", "result", "extras")) . PHP_EOL);
+		$this->plugin_settings = [];
+		
+		$plugin = elgg_get_plugin_from_id('ws_pack');
+		$plugin_settings = $plugin->getAllSettings();
+		if (empty($plugin_settings)) {
+			return;
 		}
 		
-		// some default logging columns
-		$defaults = array(
-			date(DATE_RSS),
-			time()
-		);
+		foreach ($plugin_settings as $name => $value) {
+			
+			if (stripos($name, 'ionic_cloud_') !== 0) {
+				continue;
+			}
+			
+			$name = substr($name, strlen('ionic_cloud_'));
+			$this->plugin_settings[$name] = $value;
+		}
+	}
+	
+	/**
+	 * Prepare the Ionic Cloud client
+	 *
+	 * @return false|IonicPushService
+	 */
+	private function getIonicClient() {
 		
-		// merge defaults with actual data
-		$contents = array_merge($defaults, $contents);
+		// already loaded
+		if (isset($this->iconic_client)) {
+			return $this->iconic_client;
+		}
 		
-		// write logging
-		return file_put_contents($filename, implode(";", $contents) . PHP_EOL, FILE_APPEND);
+		$this->loadPluginSettings();
+		
+		// only load once
+		$this->iconic_client = false;
+		
+		$api_token = elgg_extract('api_token', $this->plugin_settings);
+		$api_profile = elgg_extract('profile', $this->settings);
+		if (empty($api_token) || empty($api_profile)) {
+			return false;
+		}
+		
+		try {
+			$client = new IonicPushService($api_profile, $api_token);
+		} catch (Exception $e) {
+			return false;
+		}
+		
+		// store for further use
+		$this->iconic_client = $client;
+		return $client;
 	}
 }

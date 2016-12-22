@@ -667,3 +667,36 @@ function ws_pack_forward_without_secret() {
 	
 	forward($href);
 }
+
+/**
+ * Get all registered api applications
+ *
+ * @return false|APIApplication[]
+ */
+function ws_pack_get_applications() {
+	
+	$applications = elgg_get_entities([
+		'type' => 'object',
+		'subtype' => APIApplication::SUBTYPE,
+		'limit' => false,
+	]);
+	if (empty($applications)) {
+		return false;
+	}
+	
+	$result = [];
+	/* @var $application APIApplication */
+	foreach ($applications as $application) {
+		if ($application->getStatusCode() !== SuccessResult::$RESULT_SUCCESS) {
+			continue;
+		}
+		
+		$result[] = $application;
+	}
+	
+	if (empty($result)) {
+		return false;
+	}
+	
+	return $result;
+}

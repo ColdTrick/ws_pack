@@ -11,6 +11,9 @@ require_once(dirname(__FILE__) . '/lib/events.php');
 require_once(dirname(__FILE__) . '/lib/functions.php');
 require_once(dirname(__FILE__) . '/lib/hooks.php');
 
+// composer autoloaded
+@include_once(dirname(__FILE__) . '/vendor/autoload.php');
+
 // register default Elgg events
 elgg_register_event_handler('plugins_boot', 'system', 'ws_pack_plugins_boot');
 elgg_register_event_handler('init', 'system', 'ws_pack_init');
@@ -81,6 +84,8 @@ function ws_pack_init() {
 	elgg_register_event_handler('created', 'river', 'ws_pack_created_river_event_handler');
 	elgg_register_event_handler('upgrade', 'system', '\ColdTrick\WsPack\Upgrade::checkClasses');
 	elgg_register_event_handler('shutdown', 'system', 'ws_pack_shutdown_user_counter');
+	
+	elgg_register_event_handler('create', 'object', '\ColdTrick\WsPack\SiteNotification::create');
 	
 	// register admin menu items
 	// @todo move to class

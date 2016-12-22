@@ -414,6 +414,8 @@ class APIApplication extends ElggObject {
 				continue;
 			}
 			
+			$notification_service = new $classname($settings);
+			
 			$notify_options = [
 				'type' => 'object',
 				'subtype' => APIApplicationUserSetting::SUBTYPE,
@@ -430,6 +432,24 @@ class APIApplication extends ElggObject {
 			
 			switch ($service_name) {
 				case 'ionic_cloud':
+					
+					foreach ($annotations as $service_setting) {
+						if (empty($service_setting->value)) {
+							continue;
+						}
+						
+						$user_setting = @json_decode($service_setting->value, true);
+						if (!is_array($user_setting)) {
+							continue;
+						}
+						
+						$device_token = elgg_extract('device_token', $user_setting);
+						if (empty($device_token)) {
+							continue;
+						}
+						
+						$notification_service->sendMessage($message, $device_token);
+					}
 					
 					break;
 			}
@@ -467,4 +487,3 @@ class APIApplication extends ElggObject {
 		return elgg_extract($service_name, $handlers, false);
 	}
 }
-	
