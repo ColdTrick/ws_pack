@@ -256,11 +256,16 @@ function ws_pack_export_entities($entities) {
 							continue;
 						}
 						
+						$entity_value = $entity->$metadata_name;
+						if ($entity_value === null) {
+							continue;
+						}
+						
 						$entity_field_data = [
 							'name' => $metadata_name,
 							'label' => elgg_echo("group:{$metadata_name}"),
 							'type' => $type,
-							'value' => $entity->$metadata_name,
+							'value' => $entity_value,
 						];
 						
 						$field_data[$metadata_name] = $entity_field_data;
@@ -281,11 +286,16 @@ function ws_pack_export_entities($entities) {
 							continue;
 						}
 						
+						$entity_value = $entity->$metadata_name;
+						if ($entity_value === null) {
+							continue;
+						}
+						
 						$entity_field_data = [
 							'name' => $metadata_name,
 							'label' => elgg_echo("profile:{$metadata_name}"),
 							'type' => $type,
-							'value' => $entity->$metadata_name,
+							'value' => $entity_value,
 						];
 						
 						$field_data[$metadata_name] = $entity_field_data;
