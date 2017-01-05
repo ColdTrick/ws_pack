@@ -61,19 +61,15 @@ function ws_pack_users_expose_functions() {
  * @return SuccessResult|ErrorResult
  */
 function ws_pack_users_get_logged_in_user() {
-	$result = false;
-	
-	if ($user = elgg_get_logged_in_user_entity()) {
-		if ($export = ws_pack_export_entity($user)) {
-			$result = new SuccessResult($export);
+	$user = elgg_get_logged_in_user_entity();
+	if ($user) {
+		$export = ws_pack_export_entity($user);
+		if ($export) {
+			return new SuccessResult($export);
 		}
 	}
 	
-	if ($result === false) {
-		$result = new ErrorResult(elgg_echo("notfound"));
-	}
-	
-	return $result;
+	return new ErrorResult(elgg_echo('notfound'));
 }
 
 /**

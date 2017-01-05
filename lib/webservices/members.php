@@ -86,8 +86,7 @@ function ws_pack_get_friends() {
  * @return SuccessResult|ErrorResult
  */
 function ws_pack_search_members($search_str) {
-	$result = false;
-
+	
 	$user = elgg_get_logged_in_user_entity();
 	$api_application = ws_pack_get_current_api_application();
 	
@@ -97,19 +96,14 @@ function ws_pack_search_members($search_str) {
 		$params["type"] = "user";
 
 		$search_results = elgg_trigger_plugin_hook("search", "user", $params, array());
-		if ($search_results === false) {
-			// error
-		} else {
+		if ($search_results !== false) {
 			$search_results["entities"] = ws_pack_export_entities($search_results["entities"]);
-			$result = new SuccessResult($search_results);
+			
+			return new SuccessResult($search_results);
 		}
 	}
 	
-	if ($result === false) {
-		$result = new ErrorResult(elgg_echo("ws_pack:error:notfound"));
-	}
-	
-	return $result;
+	return new ErrorResult(elgg_echo('ws_pack:error:notfound'));
 }
 
 /**
@@ -120,7 +114,6 @@ function ws_pack_search_members($search_str) {
  * @return SuccessResult|ErrorResult
  */
 function ws_pack_get_member($guid) {
-	$result = false;
 
 	$user = elgg_get_logged_in_user_entity();
 	$api_application = ws_pack_get_current_api_application();
@@ -130,13 +123,9 @@ function ws_pack_get_member($guid) {
 		$member_result = get_entity($guid);
 		if ($member_result !== false) {
 			$member_result = ws_pack_export_entity($member_result);
-			$result = new SuccessResult($member_result);
+			return new SuccessResult($member_result);
 		}
 	}
 	
-	if ($result === false) {
-		$result = new ErrorResult(elgg_echo("ws_pack:error:notfound"));
-	}
-	
-	return $result;
+	return new ErrorResult(elgg_echo('ws_pack:error:notfound'));
 }
