@@ -39,7 +39,7 @@ class WsPackIonicCloud extends WsPackPushNotificationService {
 	 *
 	 * @return bool
 	 */
-	public function sendMessage($text) {
+	public function sendMessage($text = "") {
 		
 		if (empty($text)) {
 			return false;
