@@ -206,72 +206,112 @@ function ws_pack_activate_api_user_from_id($api_user_id) {
  * @return boolean|array
  */
 function ws_pack_export_entities($entities) {
-	$result = false;
 	
-	if (!empty($entities) && is_array($entities)) {
-		$result = array();
+	if (empty($entities) || !is_array($entities)) {
+		return false;
+	}
+	
+	$result = [];
 		
-		foreach ($entities as $entity) {
-			if ($entity instanceof ElggEntity) {
-				$tmp_result = array();
-				
-				// get general export values
-				$export_values = $entity->getExportableValues();
-				
-				foreach ($export_values as $field_name) {
-					$tmp_result[$field_name] = $entity->$field_name;
-				}
-				
-				// get icon urls
-				if ($icon_sizes = elgg_get_config("icon_sizes")) {
-					$icon_urls = array();
+	foreach ($entities as $entity) {
+		if (!($entity instanceof ElggEntity)) {
+			continue;
+		}
+		
+		$tmp_result = [];
+		
+		// get general export values
+		$export_values = $entity->getExportableValues();
+		
+		foreach ($export_values as $field_name) {
+			$tmp_result[$field_name] = $entity->$field_name;
+		}
+		
+		// get icon urls
+		$icon_sizes = elgg_get_config('icon_sizes');
+		if ($icon_sizes) {
+			$icon_urls = [];
+			
+			foreach ($icon_sizes as $size => $info) {
+				$icon_urls[$size] = $entity->getIconURL($size);
+			}
+			
+			$tmp_result['icon_urls'] = $icon_urls;
+		}
+		
+		// add url to the entity
+		$tmp_result['url'] = ws_pack_create_sso_url($entity->getURL());
+		
+		// check for additional information
+		switch ($entity->getType()) {
+			case 'group':
+				// get the group profile fields
+				$group_fields = elgg_get_config('group');
+				if ($group_fields) {
+					$field_data = [];
 					
-					foreach ($icon_sizes as $size => $info) {
-						$icon_urls[$size] = $entity->getIconURL($size);
+					foreach ($group_fields as $metadata_name => $type) {
+						
+						if ($type == 'hidden') {
+							continue;
+						}
+						
+						$entity_value = $entity->$metadata_name;
+						if ($entity_value === null) {
+							continue;
+						}
+						
+						$entity_field_data = [
+							'name' => $metadata_name,
+							'label' => elgg_echo("group:{$metadata_name}"),
+							'type' => $type,
+							'value' => $entity_value,
+						];
+						
+						$field_data[$metadata_name] = $entity_field_data;
 					}
 					
-					$tmp_result["icon_urls"] = $icon_urls;
+					$tmp_result['profile_fields'] = $field_data;
 				}
+				break;
+			case 'user':
+				//get the user profile fields
+				$profile_fields = elgg_get_config('profile_fields');
+				if ($profile_fields) {
+					$field_data = [];
 				
-				// add url to the entity
-				$tmp_result["url"] = ws_pack_create_sso_url($entity->getURL());
+					foreach ($profile_fields as $metadata_name => $type) {
+					
+						if ($type == 'hidden') {
+							continue;
+						}
+						
+						$entity_value = $entity->$metadata_name;
+						if ($entity_value === null) {
+							continue;
+						}
+						
+						$entity_field_data = [
+							'name' => $metadata_name,
+							'label' => elgg_echo("profile:{$metadata_name}"),
+							'type' => $type,
+							'value' => $entity_value,
+						];
+						
+						$field_data[$metadata_name] = $entity_field_data;
+					}
 				
-				// check for additional information
-				switch ($entity->getType()) {
-					case "group":
-						// get the group profile fields
-						if ($group_fields = elgg_get_config("group")) {
-							$field_data = array();
-							
-							foreach ($group_fields as $metadata_name => $type) {
-								$field_data[$metadata_name] = $entity->$metadata_name;
-							}
-							
-							$tmp_result["profile_fields"] = $field_data;
-						}
-						break;
-					case "user":
-						//get the user profile fields
-						if ($profile_fields = elgg_get_config("profile_fields")) {
-							$field_data = array();
-						
-							foreach ($profile_fields as $metadata_name => $type) {
-								$field_data[$metadata_name] = $entity->$metadata_name;
-							}
-						
-							$tmp_result["profile_fields"] = $field_data;
-						}
-						break;
-					case "site":
-						// sites have different urls
-						$tmp_result["url"] = $entity->url;
-						break;
+					$tmp_result['profile_fields'] = $field_data;
 				}
-				
-				// return everything
-				$result[] = $tmp_result;
-			}
+				break;
+			case 'site':
+				// sites have different urls
+				$tmp_result['url'] = $entity->url;
+				break;
 		}
+		
+		// return everything
+		$result[] = $tmp_result;
 	}
 	
 	return $result;
@@ -285,18 +325,17 @@ function ws_pack_export_entities($entities) {
  * @return boolean|ElggEntity
  */
 function ws_pack_export_entity(ElggEntity $entity) {
-	$result = false;
 	
-	// make sure we have an entity
-	if (!empty($entity) && ($entity instanceof ElggEntity)) {
-		$temp = array($entity);
-		
-		if ($export = ws_pack_export_entities($temp)) {
-			$result = $export[0];
-		}
+	if (!($entity instanceof ElggEntity)) {
+		return false;
 	}
 	
-	return $result;
+	$export = ws_pack_export_entities([$entity]);
+	if ($export) {
+		return $export[0];
+	}
+	
+	return false;
 }
 
 /**
