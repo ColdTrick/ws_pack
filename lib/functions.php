@@ -251,6 +251,11 @@ function ws_pack_export_entities($entities) {
 					$field_data = [];
 					
 					foreach ($group_fields as $metadata_name => $type) {
+						
+						if ($type == 'hidden') {
+							continue;
+						}
+						
 						$entity_field_data = [
 							'name' => $metadata_name,
 							'label' => elgg_echo("group:{$metadata_name}"),
@@ -271,6 +276,10 @@ function ws_pack_export_entities($entities) {
 					$field_data = [];
 				
 					foreach ($profile_fields as $metadata_name => $type) {
+					
+						if ($type == 'hidden') {
+							continue;
+						}
 						
 						$entity_field_data = [
 							'name' => $metadata_name,
