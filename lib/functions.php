@@ -320,6 +320,11 @@ function ws_pack_export_entities($entities) {
 				break;
 		}
 		
+		// generic autop for description metadata
+		if (isset($tmp_result['description'])) {
+			$tmp_result['description'] = elgg_autop($tmp_result['description']);
+		}
+		
 		// return everything
 		$result[] = $tmp_result;
 	}
