@@ -228,6 +228,12 @@ function ws_pack_export_entities($entities) {
 		}
 		
 		// get icon urls
+		if (!$entity->icontime) {
+			// ugly hack...
+			$old_view_type = elgg_get_viewtype();
+			elgg_set_viewtype('default');
+		}
+		
 		$icon_sizes = elgg_get_config('icon_sizes');
 		if ($icon_sizes) {
 			$icon_urls = [];
@@ -241,6 +247,10 @@ function ws_pack_export_entities($entities) {
 		
 		// add url to the entity
 		$tmp_result['url'] = ws_pack_create_sso_url($entity->getURL());
+		
+		if (!$entity->icontime) {
+			elgg_set_viewtype($old_view_type);
+		}
 		
 		// check for additional information
 		switch ($entity->getType()) {
