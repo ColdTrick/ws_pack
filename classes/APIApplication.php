@@ -448,7 +448,8 @@ class APIApplication extends ElggObject {
 							continue;
 						}
 						
-						$notification_service->sendMessage($message, $device_token);
+						$notification_service->setSetting('device_token', $device_token);
+						$notification_service->sendMessage($message);
 					}
 					
 					break;

@@ -23,6 +23,7 @@ class WsPackIonicCloud extends WsPackPushNotificationService {
 	 * @return void
 	 */
 	public function __construct($settings) {
+		$this->settings = [];
 		
 		if (!empty($settings) && is_array($settings)) {
 			$this->settings = $settings;
@@ -33,15 +34,19 @@ class WsPackIonicCloud extends WsPackPushNotificationService {
 	 * Sends a message
 	 *
 	 * @param string $text         message to be sent
-	 * @param mixed  $device_token the device token to send the message to
 	 *
 	 * @see WsPackPushNotificationInterface::sendMessage()
 	 *
 	 * @return bool
 	 */
-	public function sendMessage($text, $device_token) {
+	public function sendMessage($text = "") {
 		
-		if (empty($text) || empty($device_token)) {
+		if (empty($text)) {
+			return false;
+		}
+		
+		$device_token = $this->getSetting('device_token');
+		if (empty($device_token)) {
 			return false;
 		}
 		
@@ -77,6 +82,29 @@ class WsPackIonicCloud extends WsPackPushNotificationService {
 	 */
 	protected function log($content) {
 		// @TODO fill this
+	}
+	
+	/**
+	 * Set a setting
+	 *
+	 * @param string $name  the name of the setting
+	 * @param mixed  $value the value of the setting
+	 *
+	 * @return void
+	 */
+	public function setSetting($name, $value) {
+		$this->settings[$name] = $value;
+	}
+	
+	/**
+	 * Get a setting
+	 *
+	 * @param string $setting_name the name of the setting
+	 *
+	 * @return null|mixed
+	 */
+	public function getSetting($setting_name) {
+		return elgg_extract($setting_name, $this->settings);
 	}
 	
 	/**
