@@ -209,7 +209,7 @@ function ws_pack_get_discussions($group_guid) {
 /**
  * Get Discussion
  *
- * @param int $guid   Discussion GUID
+ * @param int $guid Discussion GUID
  *
  * @return SuccessResult|ErrorResult
  */
@@ -219,35 +219,33 @@ function ws_pack_get_discussion($guid) {
 		return new ErrorResult(elgg_echo('ws_pack:error:notfound'));
 	}
 	
-	$discussions = elgg_get_entities([
-		'type' => 'object',
-		'order_by' => 'e.last_action desc',
-		'guid' => $guid,
-	]);
-
-	// returns guid of wire post
-	if ($discussions === false) {
+	$entity = get_entity($guid);
+	if (empty($entity) || $entity->getSubtype() !== 'discussion') {
 		return new ErrorResult(elgg_echo('ws_pack:error:notfound'));
 	}
 	
-	$result['entities'] = ws_pack_export_entities($discussions);
-	$guids = [];
+	$discussion = ws_pack_export_entity($entity);
+	$discussion['owner'] = ws_pack_export_entity($entity->getOwnerEntity());
+
+	$discussion['replies'] = [];
 	
-	foreach ($result['entities'] as $key => $discussion) {
-		$discussion_guid = $discussion['guid'];
-		
-		if (!in_array($discussion_guid, $guids)) {
+	$replies = elgg_get_entities([
+		'type' => 'object',
+		'subtype' => 'discussion_reply',
+		'limit' => false,
+		'container_guid' => $guid,
+	]);
+	
+	if ($replies) {
+		foreach ($replies as $reply) {
+			$reply_object = ws_pack_export_entity($reply);
+			$reply_object['owner'] = ws_pack_export_entity($reply->getOwnerEntity());
 			
-			$guids[] = $discussion_guid;
-			
-			$owner = get_entity($discussion['owner_guid']);
-			$discussion['owner'] = ws_pack_export_entity($owner);
-			
-			$result['entities'][$key] = $discussion;
-		} else {
-			unset($result['entities'][$key]);
+			$discussion['replies'][] = $reply_object;
 		}
 	}
-		
+	
+	$result['entities'][] = $discussion;
+	
 	return new SuccessResult($result);
 }
