@@ -132,7 +132,7 @@ function post_discussion($title = false, $content, $group_guid, $tags = false, $
 		$topic->tags = $tags;
 		
 		$topic->description = $content;
-		$topic->subtype = "groupforumtopic";
+		$topic->subtype = "discussion";
 		$topic->owner_guid = $user->guid;
 		$topic->access_id = $access;
 		$topic->container_guid = $group_guid;
@@ -201,7 +201,7 @@ function ws_pack_get_discussions($group_guid) {
 	if (!empty($user) && !empty($api_application)) {
 		$options = array(
 			'type' => 'object',
-			'subtype' => array('groupforumtopic','discussion_reply'),
+			'subtype' => array('discussion'),
 			'limit' => 50,
 			'order_by' => 'e.last_action desc',
 			'container_guid' => $group_guid,
