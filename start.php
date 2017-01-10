@@ -7,7 +7,6 @@ define('WS_PACK_API_NO_RESULTS', -100);
 define('WS_PACK_API_REGISTRATION_DISABLED', -110);
 
 // load libs
-require_once(dirname(__FILE__) . '/lib/events.php');
 require_once(dirname(__FILE__) . '/lib/functions.php');
 require_once(dirname(__FILE__) . '/lib/hooks.php');
 
@@ -81,7 +80,6 @@ function ws_pack_init() {
 	elgg_register_plugin_hook_handler('route', '_graphics', 'ws_pack_site_icon_handler');
 	
 	// register event handlers
-	elgg_register_event_handler('created', 'river', 'ws_pack_created_river_event_handler');
 	elgg_register_event_handler('upgrade', 'system', '\ColdTrick\WsPack\Upgrade::checkClasses');
 	elgg_register_event_handler('shutdown', 'system', 'ws_pack_shutdown_user_counter');
 	

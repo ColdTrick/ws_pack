@@ -61,6 +61,12 @@ class WsPackIonicCloud extends WsPackPushNotificationService {
 		
 		$notification = [
 			'message' => $text,
+			'android' => [
+				'badge' => true,
+			],
+			'ios' => [
+				'badge' => (int) $this->getSetting('count'),
+			],
 			'payload' => [
 				'site_url' => elgg_get_site_url(),
 			],
