@@ -61,6 +61,9 @@ class WsPackIonicCloud extends WsPackPushNotificationService {
 		
 		$notification = [
 			'message' => $text,
+			'payload' => [
+				'site_url' => elgg_get_site_url(),
+			],
 		];
 		
 		try {
