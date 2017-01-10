@@ -188,7 +188,6 @@ function ws_pack_get_conversation($user_guid, $fromto_guid, $relationship, $limi
 		$options = array(
 			'joins' => array(
 				"JOIN {$db_prefix}metadata msg_toId on e.guid = msg_toId.entity_guid",
-				"JOIN {$db_prefix}metadata msg_msg on e.guid = msg_msg.entity_guid",
 				"JOIN {$db_prefix}metadata msg_fromId on e.guid = msg_fromId.entity_guid",
 			),
 			'owner_guid' => $user_guid,
@@ -201,13 +200,11 @@ function ws_pack_get_conversation($user_guid, $fromto_guid, $relationship, $limi
 		if ($relationship == "from") {
 			$options["wheres"] = array(
 				"msg_toId.name_id='{$map['toId']}' AND msg_toId.value_id='{$map[$user_guid]}'",
-				"msg_msg.name_id='{$map['msg']}' AND msg_msg.value_id='{$map[1]}'",
 				"msg_fromId.name_id='{$map['fromId']}' AND msg_fromId.value_id='{$map[$fromto_guid]}'",
 			);
 		} elseif ($relationship == "to") {
 			$options["wheres"] = array(
 				"msg_fromId.name_id='{$map['fromId']}' AND msg_fromId.value_id='{$map[$user_guid]}'",
-				"msg_msg.name_id='{$map['msg']}' AND msg_msg.value_id='{$map[1]}'",
 				"msg_toId.name_id='{$map['toId']}' AND msg_toId.value_id='{$map[$fromto_guid]}'",
 			);
 		}
@@ -238,87 +235,73 @@ function ws_pack_get_conversation($user_guid, $fromto_guid, $relationship, $limi
  * @return SuccessResult|ErrorResult
  */
 function ws_pack_get_last_conversations($user_guid, $limit = 100, $offset = 0, $count = false) {
-	$result = false;
-
 	$user = elgg_get_logged_in_user_entity();
-	$api_application = ws_pack_get_current_api_application();
+	if (empty($user)) {
+		return new ErrorResult(elgg_echo('ws_pack:error:notfound'));
+	}
 	
-	if (!empty($user) && !empty($api_application)) {
+	if (!$user_guid) {
+		$user_guid = elgg_get_logged_in_user_guid();
+	}
+	
+	$db_prefix = elgg_get_config('dbprefix');
+	
+	$strings = ['toId', $user_guid, 'msg', 1, 'fromId'];
+	
+	$map = [];
+	foreach ($strings as $string) {
+		$id = elgg_get_metastring_id($string);
+		$map[$string] = $id;
+	}
+	
+	$messages = elgg_get_entities_from_metadata([
+		'type' => 'object',
+		'subtype' => 'messages',
+		'selects' => [
+			"MAX(e.guid) as guid",
+			"MAX(e.time_created) as time_created",
+		],
+		'joins' => [
+			"JOIN {$db_prefix}metadata msg_toId ON e.guid = msg_toId.entity_guid",
+			"JOIN {$db_prefix}metadata msg_msg ON e.guid = msg_msg.entity_guid",
+			"JOIN {$db_prefix}metadata msg_fromId ON e.guid = msg_fromId.entity_guid",
+		],
+		'owner_guid' => $user_guid,
+		'limit' => $limit,
+		'offset' => $offset,
+		'count' => $count,
+		'group_by' => "msg_fromId.value_id, msg_toId.value_id",
+	]);
+
+	if (!$messages) {
+		return new ErrorResult(elgg_echo('ws_pack:error:notfound'));
+	}
+	
+	$results['entities'] = ws_pack_export_entities($messages);
+	$guids = [];
+	foreach ($results['entities'] as $key => $message) {
+		$message_guid = $message['guid'];
 		
-		if (!$user_guid) {
-			$user_guid = elgg_get_logged_in_user_guid();
-		}
-		
-		$db_prefix = elgg_get_config('dbprefix');
-		
-		$strings = array('toId', $user_guid, 'msg', 1, 'fromId', $fromto_guid);
-		
-		$map = array();
-		foreach ($strings as $string) {
-			$id = elgg_get_metastring_id($string);
-			$map[$string] = $id;
-		}
-		
-		$options = array(
-			'selects' => array(
-				"MAX(e.guid) as guid",
-				"MAX(e.time_created) as time_created",
-			),
-			'joins' => array(
-				"JOIN {$db_prefix}metadata msg_toId on e.guid = msg_toId.entity_guid",
-				"JOIN {$db_prefix}metadata msg_msg on e.guid = msg_msg.entity_guid",
-				"JOIN {$db_prefix}metadata msg_fromId on e.guid = msg_fromId.entity_guid",
-			),
-			'owner_guid' => $user_guid,
-			'limit' => $limit,
-			'offset' => $offset,
-			'count' => $count,
-		);
-		
-		$options["wheres"] = array(
-			"msg_msg.name_id='{$map['msg']}' AND msg_msg.value_id='{$map[1]}'"
-		);
+		if (!in_array($message_guid,$guids)) {
+			
+			$guids[] = $message_guid;
+			$message_entity = get_entity($message_guid);
 
-		$options["group_by"] = "msg_fromId.value_id, msg_toId.value_id";
-
-		$messages = elgg_get_entities_from_metadata($options);
-
-		if ($messages === false) {
-			$result = new ErrorResult(elgg_echo("ws_pack:error:notfound"));
-		} else {
-
-			$messages["entities"] = ws_pack_export_entities($messages);
-			$guids = array();
-			foreach ($messages["entities"] as $key => $message) {
-				$message_guid = $message["guid"];
-				
-				if (!in_array($message_guid,$guids)) {
-					
-					$guids[] = $message_guid;
-					$message_entity = get_entity($message_guid);
-
-					$recipient_id = $message_entity->toId;
-					if ($recipient_id === $user_guid) {
-						$recipient_id = $message_entity->fromId;
-					}
-
-					$recipient = get_entity($recipient_id);
-					$message["recipient"] = ws_pack_export_entity($recipient);
-
-					$messages["entities"][$key] = $message;
-				} else {
-					unset($messages["entities"][$key]);
-				}
+			$recipient_id = $message_entity->toId;
+			if ($recipient_id === $user_guid) {
+				$recipient_id = $message_entity->fromId;
 			}
-			$result = new SuccessResult($messages);
+
+			$recipient = get_entity($recipient_id);
+			$message['recipient'] = ws_pack_export_entity($recipient);
+
+			$results['entities'][$key] = $message;
+		} else {
+			unset($results['entities'][$key]);
 		}
 	}
 	
-	if ($result === false) {
-		$result = new ErrorResult(elgg_echo("ws_pack:error:notfound"));
-	}
-	
-	return $result;
+	return new SuccessResult($results);
 }
 
 /**
